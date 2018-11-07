@@ -8,6 +8,8 @@ import java.util.Random;
  */
 public class CommunicationParser {
     public static final String PROTOCOL_VERSION = "1.0";
+    public static final String END_WAIT = "waiting";
+    public static final String END_BREAK = "break";
     private ClientType clientType;
 
     public CommunicationParser(ClientType clientType){
@@ -27,7 +29,7 @@ public class CommunicationParser {
             handshake = new String[3];
             handshake[0] = "client.nspirep2p.version=" + PROTOCOL_VERSION;
             handshake[1] = "client.nspirep2p.uuid=" + client.uuid;
-            handshake[2] = "waiting";
+            handshake[2] = END_WAIT;
             return handshake;
         }
         return null;
@@ -49,7 +51,7 @@ public class CommunicationParser {
                         newClient.uuid = handshake[1].split("=")[1];
                         String[] response = new String[2];
                         response[0] = "accept";
-                        response[1] = "waiting";
+                        response[1] = END_WAIT;
                         return response;
                     }
                 }
@@ -57,7 +59,7 @@ public class CommunicationParser {
         }
         String[] response = new String[2];
         response[0] = "deny";
-        response[1] = "break";
+        response[1] = END_BREAK;
         return response;
     }
 
@@ -78,13 +80,13 @@ public class CommunicationParser {
             push = new String[3];
             push[0] = "auth.uuid=" + client.uuid;
             push[1] = "client.nspirep2p.username=" + username;
-            push[2] = "waiting";
+            push[2] = END_WAIT;
             return push;
         }else if (clientType == ClientType.SERVER){
             push = new String[3];
             push[0] = "client.uuid=" + client.uuid;
             push[1] = "client.username=" + username;
-            push[2] = "break";
+            push[2] = END_BREAK;
             client.username = username;
             return push;
         }
