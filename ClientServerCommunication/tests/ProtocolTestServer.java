@@ -34,7 +34,7 @@ public class ProtocolTestServer {
         parser = new CommunicationParser(ClientType.SERVER);
         Client newClient = new Client();
         String[] acceptHandshake = parser.parseClientHandshake(handshake, newClient);
-        assertEquals(client.uuid, newClient.username);
+        assertEquals(client.uuid, newClient.uuid);
         assertEquals(2, acceptHandshake.length);
         assertEquals("accept", acceptHandshake[0]);
         assertEquals("waiting", acceptHandshake[1], "Server does not wait for client");
