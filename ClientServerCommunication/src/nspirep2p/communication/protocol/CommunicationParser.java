@@ -82,14 +82,14 @@ public class CommunicationParser {
         String[] push;
         if (clientType == ClientType.CLIENT) {
             push = new String[4];
-            push[0] = "function=changeUsername";
+            push[0] = "function=CHANGE_USERNAME";
             push[1] = "auth.uuid=" + client.uuid;
             push[2] = "client.username=" + username;
             push[3] = END_WAIT;
             return push;
         } else if (clientType == ClientType.SERVER) {
             push = new String[4];
-            push[0] = "function=changeUsername";
+            push[0] = "function=CHANGE_USERNAME";
             push[1] = "client.username=" + client.username;
             push[2] = "client.newUsername=" + username;
             push[3] = END_BREAK;
@@ -101,11 +101,11 @@ public class CommunicationParser {
     }
 
     /**
-     * parses packet
+     * Used to parse packages
      *
-     * @param incoming
-     * @return
-     * @throws WrongPackageFormatException
+     * @param incoming array of the incoming messages
+     * @return a Package
+     * @throws WrongPackageFormatException If the incoming package is wrong formated
      */
     public Package parsePackage(String[] incoming) throws WrongPackageFormatException {
         if (!incoming[0].startsWith("function="))
@@ -118,11 +118,18 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     * Used by parse package
+     *
+     * @param clientIncoming array of the incoming
+     * @return a Package
+     * @throws WrongPackageFormatException If the package is wrong formated
+     */
     private Package parseClientPackage(String[] clientIncoming) throws WrongPackageFormatException {
         Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
         if (clientPackage == null)
             throw new WrongPackageFormatException(clientIncoming[0], "Function requested not found!");
-        if (clientIncoming[1].startsWith("auth.uuid="))
+        if (!clientIncoming[1].startsWith("auth.uuid="))
             throw new WrongPackageFormatException(clientIncoming[1], "No Auth UUID found!");
         clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
         for (int i = 2; i < clientIncoming.length - 1; i++) {

@@ -1,9 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import nspirep2p.communication.protocol.Client;
-import nspirep2p.communication.protocol.ClientType;
-import nspirep2p.communication.protocol.CommunicationParser;
+import nspirep2p.communication.protocol.*;
 import org.junit.jupiter.api.Test;
 
 
@@ -38,5 +36,21 @@ public class ProtocolTestServer {
         assertEquals(2, acceptHandshake.length);
         assertEquals("accept", acceptHandshake[0]);
         assertEquals("waiting", acceptHandshake[1], "Server does not wait for client");
+    }
+
+    @Test
+    public void parseUsernameChange() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        client.username = "test";
+        client.uuid = "1234";
+        String[] usernameChange = cparser.pushUsername(client, "myUsername");
+        nspirep2p.communication.protocol.Package cPackage = parser.parsePackage(usernameChange);
+        assertEquals(cPackage.getAuthUUID(), "1234");
+        assertEquals(cPackage.getFunction(), Function.CHANGE_USERNAME);
+        assertNotNull(cPackage.getArg("client.username"));
+        assertEquals(cPackage.getArg("client.username"), "myUsername");
+
     }
 }
