@@ -1,5 +1,6 @@
 package nspirep2p.application.server;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
@@ -9,7 +10,8 @@ import java.net.ServerSocket;
 public class ConnectionHandler {
     private ServerSocket socket;
 
-    public ConnectionHandler(int port) {
+    public ConnectionHandler(int port) throws IOException {
+        socket = new ServerSocket(port);
 
     }
 }
