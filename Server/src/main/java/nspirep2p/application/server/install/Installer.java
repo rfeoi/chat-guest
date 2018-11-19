@@ -1,6 +1,8 @@
 package nspirep2p.application.server.install;
 
 import GLOOP.Sys;
+import nspirep2p.application.server.Main;
+import org.tmatesoft.sqljet.core.SqlJetException;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -39,5 +41,18 @@ public class Installer {
             }
         }
 
+    }
+
+    /**
+     * Creates the database
+     *
+     * @param choosenOptions by user
+     */
+    public void createDatabase(HashMap<String, String> choosenOptions) {
+        try {
+            Main.mainClass.databaseManager.createTables();
+        } catch (SqlJetException e) {
+            e.printStackTrace();
+        }
     }
 }
