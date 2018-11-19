@@ -7,6 +7,9 @@ package nspirep2p.application.client;
  */
 
 import nspirep2p.application.client.connection.ConnectionHandler;
+import nspirep2p.application.client.fileHandling.UserPropetySave;
+
+import java.io.IOException;
 
 /**
  * TODO:
@@ -17,7 +20,8 @@ import nspirep2p.application.client.connection.ConnectionHandler;
 public class Main {
     private UserInterface userInterface;
     ConnectionHandler connectionHandler;
-    static Main mainClass;
+    public UserPropetySave userPropetySave;
+    public static Main mainClass;
 
     public static void main(String[] args){
         mainClass = new Main();
@@ -27,9 +31,26 @@ public class Main {
     private Main(){
         userInterface = new UserInterface();
         connectionHandler = new ConnectionHandler();
+        userPropetySave = new UserPropetySave();
     }
 
     private void start() {
-        userInterface.start();
+        mainClass.test();
+    }
+
+    public void test() {
+        String[] properties = new String[2];
+        if (userPropetySave.hasConfigFile()) {
+            try {
+                properties = userPropetySave.getConfigFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (String property : properties) {
+                System.out.println(property);
+            }
+        } else {
+            userInterface.start();
+        }
     }
 }

@@ -29,7 +29,7 @@ class UserInterface extends JFrame {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        frame.setTitle("Please enter your data!");
+        makeVisible(true);
         addObjects();
     }
 
