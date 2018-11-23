@@ -78,6 +78,13 @@ public class DatabaseManaging {
         database.commit();
     }
 
+    /**
+     * Insert a new setting to database (primarily used by installer)
+     *
+     * @param arg   the name of the setting
+     * @param value the value of the setting
+     * @throws SqlJetException Exception when something strangs happens with data
+     */
     public void insertSetting(ServerSetting arg, String value) throws SqlJetException {
         try {
             database.getTable("settings").insert(arg, value);

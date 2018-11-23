@@ -1,5 +1,6 @@
 package nspirep2p.application.server;
 
+import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.DatabaseManaging;
 import nspirep2p.application.server.database.ServerSetting;
 import nspirep2p.application.server.install.Installer;
@@ -14,13 +15,15 @@ import java.io.IOException;
  */
 public class Main {
     public DatabaseManaging databaseManager;
-    private ConnectionHandler connectionHandler;
+    public ServerHandler serverHandler;
+    ConnectionHandler connectionHandler;
     public static Main mainClass;
 
     public static void main(String[] args) {
         System.out.println("Welcome to NSpireP2P Server application!");
-        System.out.println("This is an opensource project licensed under MIT License");
+        System.out.println("This is an opensource project licensed under MIT License.");
         System.out.println("This is provided as it is without any warranty!");
+        System.out.println("Feel free to contribute to https://github.com/strifel/nspire-p2p.");
         mainClass = new Main();
         try {
             mainClass.start();
@@ -41,11 +44,11 @@ public class Main {
     }
 
     private void start() throws IOException, SqlJetException {
-        if (databaseManager.isInstalled()) {
-            connectionHandler = new ConnectionHandler(Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)));
-        } else {
+        if (!databaseManager.isInstalled()) {
             Installer installer = new Installer();
             installer.startSetup();
         }
+        serverHandler = new ServerHandler(this);
+        connectionHandler = new ConnectionHandler(this, Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)), Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_SLOTS)));
     }
 }

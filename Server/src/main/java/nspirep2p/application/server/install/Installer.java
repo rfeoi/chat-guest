@@ -1,7 +1,7 @@
 package nspirep2p.application.server.install;
 
-import GLOOP.Sys;
 import nspirep2p.application.server.Main;
+import nspirep2p.application.server.database.ServerSetting;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
 import java.util.HashMap;
@@ -18,8 +18,10 @@ public class Installer {
     public Installer() {
         choosenOptions = new HashMap<String, String>();
         setupOptions = new HashMap<String, String>();
-        setupOptions.put("databaseType:SQLITE", "What Type would you like to have your Database?[SQLITE]");
-        setupOptions.put("generateChannel:1", "How many default channel would you like to generate?[1]");
+        setupOptions.put("databaseType:SQLITE", "What Type would you like to have your Database?");
+        setupOptions.put("port:24466", "Which port do you want to use?");
+        setupOptions.put("slots:10", "How many slots do you wish?");
+        setupOptions.put("generateChannel:0", "How many default channel would you like to generate?");
     }
 
     /**
@@ -32,7 +34,7 @@ public class Installer {
         Scanner scanner = new Scanner(System.in);
         for (String atribute : setupOptions.keySet()) {
             String question = setupOptions.get(atribute);
-            System.out.println(question);
+            System.out.println(question + "[" + atribute.split(":")[1] + "]");
             String option = scanner.nextLine();
             if (option != null) {
                 choosenOptions.put(atribute.split("=")[0], option);
@@ -51,6 +53,8 @@ public class Installer {
     public void createDatabase(HashMap<String, String> choosenOptions) {
         try {
             Main.mainClass.databaseManager.createTables();
+            Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_PORT, choosenOptions.get("port"));
+            Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_SLOTS, choosenOptions.get("slots"));
         } catch (SqlJetException e) {
             e.printStackTrace();
         }
