@@ -17,7 +17,7 @@ public class ProtocolTestServer {
         client.username = "test1";
         String[] response = parser.pushUsername(client, "test");
         assertEquals(4, response.length, "Response from changeUsername is not 3  long");
-        assertEquals("function=changeUsername", response[0]);
+        assertEquals("function=CHANGE_USERNAME", response[0]);
         assertEquals("client.username=test1", response[1]);
         assertEquals("client.newUsername=test", response[2]);
         assertEquals("break", response[3]);

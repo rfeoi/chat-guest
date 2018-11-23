@@ -8,8 +8,8 @@ import java.util.Random;
  */
 public class CommunicationParser {
     private static final String PROTOCOL_VERSION = "1.0";
-    private static final String END_WAIT = "waiting";
-    private static final String END_BREAK = "break";
+    static final String END_WAIT = "waiting";
+    static final String END_BREAK = "break";
     private ClientType clientType;
 
     public CommunicationParser(ClientType clientType) {
@@ -64,6 +64,10 @@ public class CommunicationParser {
         response[0] = "deny";
         response[1] = END_BREAK;
         return response;
+    }
+
+    public String[] wrongPackageError(){
+        return new String[]{"error=package_wrong", END_BREAK};
     }
 
     /**
