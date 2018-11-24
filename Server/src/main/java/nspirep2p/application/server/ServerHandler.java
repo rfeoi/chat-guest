@@ -1,7 +1,7 @@
 package nspirep2p.application.server;
 
+import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
-import nspirep2p.communication.protocol.Client;
 
 public class ServerHandler {
 
@@ -25,6 +25,7 @@ public class ServerHandler {
         }
     }
 
+
     /**
      * Searches a client by his username
      *
@@ -44,7 +45,7 @@ public class ServerHandler {
      * @param uuid The uuid of the client
      * @return a client or null if none found
      */
-    private Client getClientByUUID(String uuid) {
+    public Client getClientByUUID(String uuid) {
         for (Client client : connectionHandler.getClients()) {
             if (client.uuid.equals(uuid)) return client;
         }

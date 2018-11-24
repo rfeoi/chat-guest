@@ -1,9 +1,7 @@
 package nspirep2p.application.server.connection;
 
-import nspirep2p.communication.protocol.CommunicationParser;
-import nspirep2p.communication.protocol.MultipleLinesReader;
+import nspirep2p.communication.protocol.*;
 import nspirep2p.communication.protocol.Package;
-import nspirep2p.communication.protocol.WrongPackageFormatException;
 
 import java.io.*;
 import java.net.Socket;
@@ -33,9 +31,14 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
 
     private void parsePacket(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
+        Client client = connectionHandler.main.serverHandler.getClientByUUID(parsed.getAuthUUID());
+        if (client != this ){
+            //TODO only set to this if no permission to use other user
+            client = this;
+        }
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
-                connectionHandler.main.serverHandler.pushUsernameToClients(this, parsed.getArg("client.username"));
+                connectionHandler.main.serverHandler.pushUsernameToClients(client, parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]));
                 break;
         }
     }
