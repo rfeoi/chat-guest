@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
  * Created by strifel on 07.11.2018.
  */
 public class ProtocolTestServer {
+
+    //Test is no longer relevant (see parseUsernameChange)
+    @Deprecated
     @Test
     public void changeUsername(){
         CommunicationParser parser = new CommunicationParser(ClientType.SERVER);

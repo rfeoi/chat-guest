@@ -104,6 +104,71 @@ public class CommunicationParser {
         return null;
     }
 
+    public String[] createTempChannel(Client client) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[3];
+            push[0] = "function=CREATE_TEMP_CHANNEL";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = END_WAIT;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=CREATE_TEMP_CHANNEL";
+            push[1] = "username=" + client.username;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    public String[] removeTempChannel(Client client) {
+        if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=DELETE_TEMP_CHANNEL";
+            push[1] = "username=" + client.username;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    public String[] moveClient(Client client, String channelName) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[4];
+            push[0] = "function=MOVE";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = "channel_name=" + channelName;
+            push[3] = END_WAIT;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[4];
+            push[0] = "function=MOVE";
+            push[1] = "username=" + client.username;
+            push[2] = "channel_name=" + channelName;
+            push[3] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    public String[] inviteClient(Client inviter, Client recipient) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[4];
+            push[0] = "function=INVITE";
+            push[1] = "auth.uuid=" + inviter.uuid;
+            push[2] = "username=" + recipient.username;
+            push[3] = END_BREAK;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=INVITE";
+            push[1] = "username=" + inviter.username;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
     /**
      * Used to parse packages
      *
