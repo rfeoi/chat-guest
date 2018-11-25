@@ -13,7 +13,7 @@ import java.io.File;
  */
 public class DatabaseManaging {
 
-    private SqlJetDb database;
+    SqlJetDb database;
 
     public DatabaseManaging() throws SqlJetException {
         File dbFile = new File("database.sqlite");
@@ -25,11 +25,19 @@ public class DatabaseManaging {
      *
      * @return if it is installed
      */
+    //TODO
     public boolean isInstalled() {
         return false;
     }
 
 
+    /**
+     * Creates tables in Database
+     * Creates Table:
+     *  - settings (to save settings)
+     *  - roles (for permissions system)
+     * @throws SqlJetException if sql has an error
+     */
     public void createTables() throws SqlJetException {
         database.getOptions().setAutovacuum(true);
         database.beginTransaction(SqlJetTransactionMode.WRITE);
@@ -39,8 +47,10 @@ public class DatabaseManaging {
             database.commit();
         }
         String settingsTable = "CREATE TABLE settings (setting TEXT NOT NULL PRIMARY KEY , value TEXT)";
+        String rolesTable = "CREATE TABLE roles (name TEXT NOT NULL PRIMARY KEY, key TEXT, permissions TEXT)";
         try {
             database.createTable(settingsTable);
+            database.createTable(rolesTable);
         } finally {
             database.commit();
         }
