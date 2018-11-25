@@ -2,7 +2,7 @@ package nspirep2p.application.server.connection;
 
 import nspirep2p.application.server.Main;
 import nspirep2p.communication.protocol.ClientType;
-import nspirep2p.communication.protocol.CommunicationParser;
+import nspirep2p.communication.protocol.v1.CommunicationParser;
 
 import java.io.IOException;
 import java.net.ServerSocket;

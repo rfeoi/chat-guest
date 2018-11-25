@@ -1,6 +1,4 @@
-package nspirep2p.communication.protocol;
-
-import nspirep2p.communication.protocol.CommunicationParser;
+package nspirep2p.communication.protocol.v1;
 
 import java.util.ArrayList;
 

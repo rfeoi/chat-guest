@@ -1,4 +1,7 @@
-package nspirep2p.communication.protocol;
+package nspirep2p.communication.protocol.v1;
+
+import nspirep2p.communication.protocol.Client;
+import nspirep2p.communication.protocol.ClientType;
 
 import java.util.Random;
 
@@ -104,6 +107,15 @@ public class CommunicationParser {
         return null;
     }
 
+
+    /**
+     * For client:
+     *   Send request to create a temporary channel
+     * For server:
+     *   Tell client that there is a new channel
+     * @param client the client which want to create/has created the channel
+     * @return lines of protocol
+     */
     public String[] createTempChannel(Client client) {
         if (clientType == ClientType.CLIENT) {
             String[] push = new String[3];
@@ -121,6 +133,13 @@ public class CommunicationParser {
         return null;
     }
 
+
+    /**
+     * Only for server:
+     *   Tell client that a temp channel got removed
+     * @param client which had own the temp channel
+     * @return lines of protocol
+     */
     public String[] removeTempChannel(Client client) {
         if (clientType == ClientType.SERVER) {
             String[] push = new String[3];
@@ -132,6 +151,15 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     * For client:
+     *   Make the request to get moved to a channel
+     * For server:
+     *   Tel client that a client got moved
+     * @param client the client that moves
+     * @param channelName the channel where it moves to
+     * @return lines of protocol
+     */
     public String[] moveClient(Client client, String channelName) {
         if (clientType == ClientType.CLIENT) {
             String[] push = new String[4];
@@ -151,6 +179,16 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     * For client:
+     *   Invite a client to your channel
+     *
+     * For server:
+     *   Tell a client that it was invited
+     * @param inviter the client thats invite
+     * @param recipient the client thats receive (can be null on server side)
+     * @return lines of protocol
+     */
     public String[] inviteClient(Client inviter, Client recipient) {
         if (clientType == ClientType.CLIENT) {
             String[] push = new String[4];

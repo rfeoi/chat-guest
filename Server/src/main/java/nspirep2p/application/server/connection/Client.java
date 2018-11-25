@@ -1,7 +1,7 @@
 package nspirep2p.application.server.connection;
 
-import nspirep2p.communication.protocol.*;
-import nspirep2p.communication.protocol.Package;
+import nspirep2p.communication.protocol.v1.*;
+import nspirep2p.communication.protocol.v1.Package;
 
 import java.io.*;
 import java.net.Socket;

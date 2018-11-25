@@ -1,4 +1,4 @@
-package nspirep2p.communication.protocol;
+package nspirep2p.communication.protocol.v1;
 
 /**
  * Functions both can receive: client and server

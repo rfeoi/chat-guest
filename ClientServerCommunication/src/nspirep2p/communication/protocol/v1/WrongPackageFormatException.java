@@ -1,4 +1,4 @@
-package nspirep2p.communication.protocol;
+package nspirep2p.communication.protocol.v1;
 
 /**
  * Exception thrown when package has wrong format

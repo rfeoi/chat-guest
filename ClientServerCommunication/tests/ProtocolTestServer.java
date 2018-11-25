@@ -1,7 +1,12 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import nspirep2p.communication.protocol.*;
+import nspirep2p.communication.protocol.v1.CommunicationParser;
+import nspirep2p.communication.protocol.v1.Function;
+import nspirep2p.communication.protocol.v1.Package;
+import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 import org.junit.jupiter.api.Test;
 
 
@@ -49,11 +54,56 @@ public class ProtocolTestServer {
         client.username = "test";
         client.uuid = "1234";
         String[] usernameChange = cparser.pushUsername(client, "myUsername");
-        nspirep2p.communication.protocol.Package cPackage = parser.parsePackage(usernameChange);
+        Package cPackage = parser.parsePackage(usernameChange);
         assertEquals(cPackage.getAuthUUID(), "1234");
         assertEquals(cPackage.getFunction(), Function.CHANGE_USERNAME);
         assertNotNull(cPackage.getArg("client.username"));
         assertEquals(cPackage.getArg("client.username"), "myUsername");
-
     }
+
+    @Test
+    public void parseCreateTempChannel() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        client.username = "test";
+        client.uuid = "1234";
+        String[] createTempChannel = cparser.createTempChannel(client);
+        Package cPackage = parser.parsePackage(createTempChannel);
+        assertEquals(cPackage.getAuthUUID(), client.uuid);
+        assertEquals(cPackage.getFunction(), Function.CREATE_TEMP_CHANNEL);
+    }
+    @Test
+    public void parseMove() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        client.username = "test";
+        client.uuid = "1234";
+        String[] moveClient = cparser.moveClient(client, "test");
+        Package cPackage = parser.parsePackage(moveClient);
+        assertEquals(cPackage.getAuthUUID(), client.uuid);
+        assertEquals(cPackage.getFunction(), Function.MOVE);
+        assertNull(cPackage.getArg(Function.MOVE.getParameters()[0]));
+        assertNotNull(cPackage.getArg(Function.MOVE.getParameters()[1]));
+        assertEquals(cPackage.getArg(Function.MOVE.getParameters()[1]), "test");
+    }
+
+    @Test
+    public void parseInvite() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        Client client1 = new Client();
+        client1.username = "test";
+        client.uuid = "1234";
+        String[] moveClient = cparser.inviteClient(client, client1);
+        Package cPackage = parser.parsePackage(moveClient);
+        assertEquals(cPackage.getAuthUUID(), client.uuid);
+        assertEquals(cPackage.getFunction(), Function.INVITE);
+        assertNotNull(cPackage.getArg(Function.MOVE.getParameters()[0]));
+        assertEquals(cPackage.getArg(Function.MOVE.getParameters()[0]), client1.username);
+    }
+
+
 }
