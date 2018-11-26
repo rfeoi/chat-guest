@@ -1,4 +1,7 @@
-package nspirep2p.communication.protocol;
+package nspirep2p.communication.protocol.v1;
+
+import nspirep2p.communication.protocol.Client;
+import nspirep2p.communication.protocol.ClientType;
 
 import java.util.Random;
 
@@ -8,8 +11,8 @@ import java.util.Random;
  */
 public class CommunicationParser {
     private static final String PROTOCOL_VERSION = "1.0";
-    private static final String END_WAIT = "waiting";
-    private static final String END_BREAK = "break";
+    static final String END_WAIT = "waiting";
+    static final String END_BREAK = "break";
     private ClientType clientType;
 
     public CommunicationParser(ClientType clientType) {
@@ -66,6 +69,10 @@ public class CommunicationParser {
         return response;
     }
 
+    public String[] wrongPackageError(){
+        return new String[]{"error=package_wrong", END_BREAK};
+    }
+
     /**
      * For both server and client side
      * <p>
@@ -97,6 +104,106 @@ public class CommunicationParser {
             return push;
         }
 
+        return null;
+    }
+
+
+    /**
+     * For client:
+     *   Send request to create a temporary channel
+     * For server:
+     *   Tell client that there is a new channel
+     * @param client the client which want to create/has created the channel
+     * @return lines of protocol
+     */
+    public String[] createTempChannel(Client client) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[3];
+            push[0] = "function=CREATE_TEMP_CHANNEL";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = END_WAIT;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=CREATE_TEMP_CHANNEL";
+            push[1] = "username=" + client.username;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+
+    /**
+     * Only for server:
+     *   Tell client that a temp channel got removed
+     * @param client which had own the temp channel
+     * @return lines of protocol
+     */
+    public String[] removeTempChannel(Client client) {
+        if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=DELETE_TEMP_CHANNEL";
+            push[1] = "username=" + client.username;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    /**
+     * For client:
+     *   Make the request to get moved to a channel
+     * For server:
+     *   Tel client that a client got moved
+     * @param client the client that moves
+     * @param channelName the channel where it moves to
+     * @return lines of protocol
+     */
+    public String[] moveClient(Client client, String channelName) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[4];
+            push[0] = "function=MOVE";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = "channel_name=" + channelName;
+            push[3] = END_WAIT;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[4];
+            push[0] = "function=MOVE";
+            push[1] = "username=" + client.username;
+            push[2] = "channel_name=" + channelName;
+            push[3] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    /**
+     * For client:
+     *   Invite a client to your channel
+     *
+     * For server:
+     *   Tell a client that it was invited
+     * @param inviter the client thats invite
+     * @param recipient the client thats receive (can be null on server side)
+     * @return lines of protocol
+     */
+    public String[] inviteClient(Client inviter, Client recipient) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[4];
+            push[0] = "function=INVITE";
+            push[1] = "auth.uuid=" + inviter.uuid;
+            push[2] = "username=" + recipient.username;
+            push[3] = END_BREAK;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=INVITE";
+            push[1] = "username=" + inviter.username;
+            push[2] = END_BREAK;
+            return push;
+        }
         return null;
     }
 
