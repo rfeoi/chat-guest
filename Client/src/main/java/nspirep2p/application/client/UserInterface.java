@@ -29,8 +29,19 @@ class UserInterface extends JFrame {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        makeVisible(true);
+        makeVisible("Please enter your data!");
         addObjects();
+    }
+
+    /**
+     * sets texts for the textfields
+     * @param username the text for the username textField
+     * @param IPAddress the text for the IP-Address textField
+     */
+    void startWithText(String username, String IPAddress) {
+        start();
+        usernameField.setText(username);
+        ipField.setText(IPAddress);
     }
 
     /**
@@ -43,7 +54,7 @@ class UserInterface extends JFrame {
         userDetails = new JPanel();
         usernameLabel = new JLabel("Username:");
         ipLabel = new JLabel("Server IP:");
-        submit = new JButton("Log In");
+        submit = new JButton("Connect!");
         submit.addActionListener(actionListener);
     }
 
@@ -59,12 +70,12 @@ class UserInterface extends JFrame {
         frame.add(submit);
     }
 
-    private void makeVisible(boolean connectionError) {
-        if (!connectionError) {
-            frame.setTitle("Error when connecting to the server!");
-        } else {
-            frame.setTitle("Please enter your data!");
-        }
+    /**
+     * makes the frame visible
+     * @param message the title of the screen
+     */
+    private void makeVisible(String message) {
+        frame.setTitle(message);
         frame.setVisible(true);
     }
 
@@ -78,9 +89,19 @@ class UserInterface extends JFrame {
             if (username.isEmpty() || username.equals("")) { return; }
             String ipAddress = ipField.getText();
             if (ipAddress.isEmpty() || ipAddress.equals("")) { return; }
+            String[] stringSplit = username.split(" ");
+            if (stringSplit.length > 1) {
+                makeVisible("You can't use spaces in your username!");
+                return;
+            }
+            stringSplit = ipAddress.split(" ");
+            if (stringSplit.length > 1) {
+                makeVisible("You can't use spaces in the IP-Address!");
+                return;
+            }
             boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
             frame.setVisible(false);
-            if (!hasSucceeded) { makeVisible(false); }
+            if (!hasSucceeded) { makeVisible("Error when connecting to the server!"); }
         }
     };
 }

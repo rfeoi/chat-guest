@@ -35,10 +35,6 @@ public class Main {
     }
 
     private void start() {
-        mainClass.test();
-    }
-
-    public void test() {
         String[] properties = new String[2];
         if (userPropetySave.hasConfigFile()) {
             try {
@@ -46,9 +42,7 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            for (String property : properties) {
-                System.out.println(property);
-            }
+            userInterface.startWithText(properties[1], properties[0]);
         } else {
             userInterface.start();
         }
