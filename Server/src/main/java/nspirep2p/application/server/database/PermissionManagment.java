@@ -8,6 +8,9 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 public class PermissionManagment {
@@ -16,6 +19,12 @@ public class PermissionManagment {
     private HashMap<String, String> keys;
     private SqlJetDb database;
     private Gson gson = new Gson();
+
+    /**
+     * This class is the permission manager and needs an Database instance
+     *
+     * @param database the database Managing instance
+     */
     public PermissionManagment(DatabaseManaging database){
         //Initialize variables
         permissions = new HashMap<String, String[]>();
@@ -30,6 +39,10 @@ public class PermissionManagment {
         }
     }
 
+    /**
+     * This will load or reload the permissions from database
+     * @throws SqlJetException if an database error happens
+     */
     private void reLoadDatabase() throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.READ_ONLY);
         ISqlJetTable table = database.getTable("roles");
@@ -49,10 +62,21 @@ public class PermissionManagment {
 
     }
 
+    /**
+     * Checks if a user has a permissions
+     * @param client which permissions should be checked
+     * @param permission which should be checked
+     */
     public void clientHasPermission(Client client, Permission permission){
         roleHasPermission(client.getRole(), permission);
     }
 
+    /**
+     * Checks if a role has a specified permission
+     * @param role the name of the role which should be checked
+     * @param permission the permission the role should be checked for
+     * @return if the role has a specified permission
+     */
     private boolean roleHasPermission(String role, Permission permission) {
         for (String perm : permissions.get(role)) {
             if (perm.equals(permission.toString())) {
@@ -60,6 +84,31 @@ public class PermissionManagment {
             }
         }
         return false;
+    }
+
+    /**
+     * Tests if a role has a specified key (Checks with clearKey)
+     *
+     * @param keyClearText the key in clear text
+     * @param role         the role of the user
+     * @return if the key is right
+     * @throws NoSuchAlgorithmException     Java error when generating md5
+     * @throws UnsupportedEncodingException When happens error with utf 8 encoding
+     */
+    public boolean checkCleartextKey(String keyClearText, String role) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        String hashed = new String(MessageDigest.getInstance("MD5").digest(keyClearText.getBytes("UTF-8")), "UTF-8");
+        return checkKey(hashed, role);
+    }
+
+    /**
+     * Check if a hashed text is equals to the key in the database
+     *
+     * @param key  the hashed key
+     * @param role the role which the key can be used
+     * @return if the key is right
+     */
+    private boolean checkKey(String key, String role) {
+        return keys.get(role).equals(key);
     }
 
 }
