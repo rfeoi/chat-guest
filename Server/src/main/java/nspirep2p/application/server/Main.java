@@ -2,6 +2,7 @@ package nspirep2p.application.server;
 
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.DatabaseManaging;
+import nspirep2p.application.server.database.PermissionManagment;
 import nspirep2p.application.server.database.ServerSetting;
 import nspirep2p.application.server.install.Installer;
 import org.tmatesoft.sqljet.core.SqlJetException;
@@ -17,6 +18,7 @@ public class Main {
     public DatabaseManaging databaseManager;
     public ServerHandler serverHandler;
     ConnectionHandler connectionHandler;
+    public PermissionManagment permissionManagment;
     public static Main mainClass;
 
     public static void main(String[] args) {
@@ -49,6 +51,8 @@ public class Main {
             installer.startSetup();
         }
         serverHandler = new ServerHandler(this);
+        permissionManagment = new PermissionManagment(databaseManager);
         connectionHandler = new ConnectionHandler(this, Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)), Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_SLOTS)));
+        connectionHandler.start();
     }
 }

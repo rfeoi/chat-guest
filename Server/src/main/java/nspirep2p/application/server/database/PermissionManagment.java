@@ -67,8 +67,8 @@ public class PermissionManagment {
      * @param client which permissions should be checked
      * @param permission which should be checked
      */
-    public void clientHasPermission(Client client, Permission permission){
-        roleHasPermission(client.getRole(), permission);
+    public boolean clientHasPermission(Client client, Permission permission){
+        return roleHasPermission(client.getRole(), permission);
     }
 
     /**

@@ -1,5 +1,6 @@
 package nspirep2p.application.server.connection;
 
+import nspirep2p.application.server.database.Permission;
 import nspirep2p.communication.protocol.v1.*;
 import nspirep2p.communication.protocol.v1.Package;
 
@@ -30,12 +31,17 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         }
     }
 
+    public boolean hasPermission(Permission permission){
+        return connectionHandler.main.permissionManagment.clientHasPermission(this, permission);
+    }
+
     private void parsePacket(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         Client client = connectionHandler.main.serverHandler.getClientByUUID(parsed.getAuthUUID());
-        if (client != this ){
-            //TODO only set to this if no permission to use other user
+        if (hasPermission(Permission.CONTROL_OTHER) && client != this){
             client = this;
+        }else{
+            //TODO send Error
         }
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
