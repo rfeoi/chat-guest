@@ -39,7 +39,7 @@ public class DatabaseManaging {
      * @throws SqlJetException if sql has an error
      */
     public void createTables() throws SqlJetException {
-        database.getOptions().setAutovacuum(true);
+        //  database.getOptions().setAutovacuum(true);
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         try {
             database.getOptions().setUserVersion(1);
@@ -47,10 +47,13 @@ public class DatabaseManaging {
             database.commit();
         }
         String settingsTable = "CREATE TABLE settings (setting TEXT NOT NULL PRIMARY KEY , value TEXT)";
+        //String settingsIndex = "CREATE INDEX value ON settings(value)";
+        String settingsIndex2 = "CREATE INDEX setting ON settings(setting)";
         String rolesTable = "CREATE TABLE roles (name TEXT NOT NULL PRIMARY KEY, key TEXT, permissions TEXT)";
         try {
             database.createTable(settingsTable);
             database.createTable(rolesTable);
+            database.createIndex(settingsIndex2);
         } finally {
             database.commit();
         }
@@ -97,7 +100,7 @@ public class DatabaseManaging {
      */
     public void insertSetting(ServerSetting arg, String value) throws SqlJetException {
         try {
-            database.getTable("settings").insert(arg, value);
+            database.getTable("settings").insert(arg.toString(), value);
         } finally {
             database.commit();
         }

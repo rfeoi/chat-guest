@@ -42,7 +42,7 @@ public class Installer {
                 choosenOptions.put(atribute.split("=")[0], atribute.split("=")[1]);
             }
         }
-
+        createDatabase(choosenOptions);
     }
 
     /**
