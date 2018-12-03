@@ -99,8 +99,8 @@ class UserInterface extends JFrame {
                 makeVisible("You can't use spaces in the IP-Address!");
                 return;
             }
-            boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
             frame.setVisible(false);
+            boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
             if (!hasSucceeded) { makeVisible("Error when connecting to the server!"); }
         }
     };
