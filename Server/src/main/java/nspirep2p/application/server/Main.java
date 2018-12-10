@@ -50,9 +50,23 @@ public class Main {
             Installer installer = new Installer();
             installer.startSetup();
         }
+        long before;
+        System.out.println("Starting server...");
+        System.out.print("Init server handler.");
+        before = System.currentTimeMillis();
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
         serverHandler = new ServerHandler(this);
+        System.out.print("Init PermissionManagment");
+        before = System.currentTimeMillis();
         permissionManagment = new PermissionManagment(databaseManager);
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
+        System.out.print("Init ConnectionHandler");
+        before = System.currentTimeMillis();
         connectionHandler = new ConnectionHandler(this, Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)), Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_SLOTS)));
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
+        System.out.print("Starting ConnectionHandler with Server.");
+        before = System.currentTimeMillis();
         connectionHandler.start();
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
     }
 }

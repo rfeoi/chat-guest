@@ -36,21 +36,19 @@ public class Installer {
             String question = setupOptions.get(atribute);
             System.out.println(question + "[" + atribute.split(":")[1] + "]");
             String option = scanner.nextLine();
-            if (option != null) {
-                choosenOptions.put(atribute.split("=")[0], option);
+            if (!option.equals("")) {
+                choosenOptions.put(atribute.split(":")[0], option);
             } else {
-                choosenOptions.put(atribute.split("=")[0], atribute.split("=")[1]);
+                choosenOptions.put(atribute.split(":")[0], atribute.split(":")[1]);
             }
         }
-        createDatabase(choosenOptions);
+        createDatabase();
     }
 
     /**
      * Creates the database
-     *
-     * @param choosenOptions by user
      */
-    public void createDatabase(HashMap<String, String> choosenOptions) {
+    private void createDatabase() {
         try {
             Main.mainClass.databaseManager.createTables();
             Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_PORT, choosenOptions.get("port"));
@@ -58,5 +56,12 @@ public class Installer {
         } catch (SqlJetException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Creates default roles
+     */
+    private void createDefaultRole() {
+        //TODO
     }
 }

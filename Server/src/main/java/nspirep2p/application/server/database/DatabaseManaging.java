@@ -27,7 +27,11 @@ public class DatabaseManaging {
      */
     //TODO
     public boolean isInstalled() {
-        return false;
+        try {
+            return this.getSetting(ServerSetting.SERVER_PORT) != null;
+        } catch (SqlJetException e) {
+            return false;
+        }
     }
 
 

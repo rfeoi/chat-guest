@@ -8,7 +8,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client extends nspirep2p.communication.protocol.Client implements Runnable {
-    private String role;
+    private String role = "user";
     Socket userSocket;
     private ConnectionHandler connectionHandler;
     private CommunicationParser parser;
