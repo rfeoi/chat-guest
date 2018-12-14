@@ -89,13 +89,11 @@ class UserInterface extends JFrame {
             if (username.isEmpty() || username.equals("")) { return; }
             String ipAddress = ipField.getText();
             if (ipAddress.isEmpty() || ipAddress.equals("")) { return; }
-            String[] stringSplit = username.split(" ");
-            if (stringSplit.length > 1) {
+            if (username.contains(" ")) {
                 makeVisible("You can't use spaces in your username!");
                 return;
             }
-            stringSplit = ipAddress.split(" ");
-            if (stringSplit.length > 1) {
+            if (ipAddress.contains(" ")) {
                 makeVisible("You can't use spaces in the IP-Address!");
                 return;
             }
