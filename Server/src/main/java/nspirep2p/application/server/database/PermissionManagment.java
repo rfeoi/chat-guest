@@ -111,4 +111,28 @@ public class PermissionManagment {
         return keys.get(role).equals(key);
     }
 
+
+    /**
+     * Creates a new role
+     *
+     * @param name        the name of the role
+     * @param permissions the permissions as array of the role
+     * @param key         the key used to get the role
+     * @throws SqlJetException              The exception for anything went wrong
+     * @throws NoSuchAlgorithmException     If something with keying went wrong
+     * @throws UnsupportedEncodingException if something with keying went wrong
+     */
+    public void createNewRole(String name, Permission[] permissions, String key) throws SqlJetException, NoSuchAlgorithmException, UnsupportedEncodingException {
+        String hashed = new String(MessageDigest.getInstance("MD5").digest(key.getBytes("UTF-8")), "UTF-8");
+        database.beginTransaction(SqlJetTransactionMode.WRITE);
+        ISqlJetTable table = database.getTable("roles");
+        String json = gson.toJson(permissions, Permission[].class);
+        try {
+            table.insert(name, json, hashed);
+        } finally {
+            database.commit();
+        }
+
+    }
+
 }
