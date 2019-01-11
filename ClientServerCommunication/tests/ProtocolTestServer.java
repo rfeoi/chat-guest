@@ -9,6 +9,9 @@ import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.channels.Channel;
+
 
 /**
  * Tests the parser class used for communication between client and server
@@ -103,6 +106,22 @@ public class ProtocolTestServer {
         assertEquals(cPackage.getFunction(), Function.INVITE);
         assertNotNull(cPackage.getArg(Function.MOVE.getParameters()[0]));
         assertEquals(cPackage.getArg(Function.MOVE.getParameters()[0]), client1.username);
+    }
+    @Test
+    public void sendMessage() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        client.uuid = "1234";
+        String[] sendMessage = cparser.sendMessage(client,"1234567890","Hallo");
+        Package cPackage = parser.parsePackage(sendMessage);
+        assertEquals(cPackage.getAuthUUID(), client.uuid);
+        assertEquals(cPackage.getFunction(), Function.SEND_MESSAGE);
+        assertEquals(cPackage.getArg(Function.SEND_MESSAGE.getParameters()[0]), "1234567890");
+        assertEquals(cPackage.getArg(Function.SEND_MESSAGE.getParameters()[1]), "Hallo");
+
+
+
     }
 
 

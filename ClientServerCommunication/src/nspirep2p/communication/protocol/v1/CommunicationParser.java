@@ -208,6 +208,37 @@ public class CommunicationParser {
     }
 
     /**
+     * For a client:
+     * Send Message to Server
+     *
+     * For Server:
+     * Send recieved Message to another client
+     */
+    public String[] sendMessage(Client sender, String channel, String message) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[5];
+            push[0] = "function=SEND_MESSAGE";
+            push[1] = "auth.uuid=" + sender.uuid;
+            push[2] = "channel=" + channel;
+            push[3] = "message=" + message;
+            push[4] = END_BREAK;
+            return push;
+
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[5];
+            push[0] = "function=SEND_MESSAGE";
+            push[1] = "channel=" + channel;
+            push[2] = "message=" + message;
+            push[3] = "username=" + sender.username;
+            push[4] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+
+
+    /**
      * Used to parse packages
      *
      * @param incoming array of the incoming messages
