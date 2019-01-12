@@ -1,7 +1,7 @@
-# Nspire-p2p (WIP)
-Tool for two nspire calculators to connect via p2p
+# Chat-Guest (WIP)
+This will be a chat software, we mainly developed in class
 ## Goal
-The goal of the project is to create a tunnel (similar to a p2p tunnel) in order to send files between two nspire calculators over the internet.
+An channeled Chat Software
 ## Why?
 Because it could be useful for somebody.
 ## Who?
