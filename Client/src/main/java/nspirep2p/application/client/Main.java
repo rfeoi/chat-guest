@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class Main {
     private UserInterface userInterface;
+    public MainInterface mainInterface;
     ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;
     public static Main mainClass;
@@ -32,6 +33,7 @@ public class Main {
         userInterface = new UserInterface();
         connectionHandler = new ConnectionHandler();
         userPropetySave = new UserPropetySave();
+        mainInterface = new MainInterface();
     }
 
     private void start() {

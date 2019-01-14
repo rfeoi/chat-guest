@@ -1,5 +1,7 @@
 package nspirep2p.application.client.connection;
 
+import nspirep2p.application.client.Main;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +34,7 @@ public class ServerParser implements Runnable{
                     System.out.println("Closing down connection!");
                     break;
                 }
-                System.out.println(message);
+                Main.mainClass.mainInterface.setNewMessage("Server", "17:27", message);
             } catch (IOException | NullPointerException e) {
                 System.out.println("Closing down connection!");
                 //e.printStackTrace();

@@ -25,12 +25,12 @@ class UserInterface extends JFrame {
         setObjects();
         userDetails.setLayout(new GridLayout(2, 2, 1, 1));
         frame.setLayout(new GridLayout(2, 1, 1, 1));
-        frame.setSize(350,150);
+        frame.setSize(350,200);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        makeVisible("Please enter your data!");
         addObjects();
+        makeVisible("Please enter your data!");
     }
 
     /**
@@ -56,6 +56,7 @@ class UserInterface extends JFrame {
         ipLabel = new JLabel("Server IP:");
         submit = new JButton("Connect!");
         submit.addActionListener(actionListener);
+        frame.setSize(350,200);
     }
 
     /**
@@ -100,6 +101,7 @@ class UserInterface extends JFrame {
             frame.setVisible(false);
             boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
             if (!hasSucceeded) { makeVisible("Error when connecting to the server!"); }
+            Main.mainClass.mainInterface.start();
         }
     };
 }
