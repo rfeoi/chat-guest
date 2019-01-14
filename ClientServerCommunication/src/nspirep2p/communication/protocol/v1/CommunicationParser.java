@@ -46,7 +46,7 @@ public class CommunicationParser {
      * This can be used to do Server stuff if denied
      *
      * @param handshake the handshake recieved from client
-     * @param newClient the client you want to have the informations in
+     * @param newClient the client you want to have the information in
      * @return protocol to send to client
      */
     public String[] parseClientHandshake(String[] handshake, Client newClient) {
@@ -77,7 +77,7 @@ public class CommunicationParser {
      * For both server and client side
      * <p>
      * Client: Change your own name
-     * You should get acceptance or deny back
+     * You should get your username change or nothing back
      * Server: Inform clients that a client changed his name
      * You should not get any response
      *
@@ -97,8 +97,8 @@ public class CommunicationParser {
         } else if (clientType == ClientType.SERVER) {
             push = new String[4];
             push[0] = "function=CHANGE_USERNAME";
-            push[1] = "client.username=" + client.username;
-            push[2] = "client.newUsername=" + username;
+            push[1] = "username=" + client.username;
+            push[2] = "newUsername=" + username;
             push[3] = END_BREAK;
             client.username = username;
             return push;
@@ -185,8 +185,8 @@ public class CommunicationParser {
      *
      * For server:
      *   Tell a client that it was invited
-     * @param inviter the client thats invite
-     * @param recipient the client thats receive (can be null on server side)
+     * @param inviter the client that's invite
+     * @param recipient the client that's receive (can be null on server side)
      * @return lines of protocol
      */
     public String[] inviteClient(Client inviter, Client recipient) {
@@ -212,7 +212,7 @@ public class CommunicationParser {
      *
      * @param incoming array of the incoming messages
      * @return a Package
-     * @throws WrongPackageFormatException If the incoming package is wrong formated
+     * @throws WrongPackageFormatException If the incoming package is wrong formatted
      */
     public Package parsePackage(String[] incoming) throws WrongPackageFormatException {
         if (!incoming[0].startsWith("function="))
@@ -220,7 +220,7 @@ public class CommunicationParser {
         if (clientType == ClientType.SERVER) {
             return parseClientPackage(incoming);
         } else if (clientType == ClientType.CLIENT) {
-            return null;
+            return parseServerPackage(incoming);
         }
         return null;
     }
@@ -230,7 +230,7 @@ public class CommunicationParser {
      *
      * @param clientIncoming array of the incoming
      * @return a Package
-     * @throws WrongPackageFormatException If the package is wrong formated
+     * @throws WrongPackageFormatException If the package is wrong formatted
      */
     private Package parseClientPackage(String[] clientIncoming) throws WrongPackageFormatException {
         Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
@@ -251,5 +251,28 @@ public class CommunicationParser {
         return clientPackage;
     }
 
+    /**
+     * Used by parse package
+     *
+     * @param clientIncoming array of the incoming
+     * @return a Package
+     * @throws WrongPackageFormatException If the package is wrong formatted
+     */
+    private Package parseServerPackage(String[] clientIncoming) throws WrongPackageFormatException {
+        Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
+        if (clientPackage == null)
+            throw new WrongPackageFormatException(clientIncoming[0], "Function requested not found!");
+        clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
+        for (int i = 1; i < clientIncoming.length - 1; i++) {
+            if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
+                throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
+            clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+        }
+        if (clientIncoming[clientIncoming.length - 1] == END_WAIT) {
+            clientPackage.setWaitForAnswer(true);
+        } else
+            clientPackage.setWaitForAnswer(false);
+        return clientPackage;
+    }
 
 }
