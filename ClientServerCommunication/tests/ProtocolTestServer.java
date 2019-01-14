@@ -104,8 +104,8 @@ public class ProtocolTestServer {
         Package cPackage = parser.parsePackage(moveClient);
         assertEquals(cPackage.getAuthUUID(), client.uuid);
         assertEquals(cPackage.getFunction(), Function.INVITE);
-        assertNotNull(cPackage.getArg(Function.MOVE.getParameters()[0]));
-        assertEquals(cPackage.getArg(Function.MOVE.getParameters()[0]), client1.username);
+        assertNotNull(cPackage.getArg(Function.INVITE.getParameters()[0]));
+        assertEquals(cPackage.getArg(Function.INVITE.getParameters()[0]), client1.username);
     }
     @Test
     public void sendMessage() throws WrongPackageFormatException {
