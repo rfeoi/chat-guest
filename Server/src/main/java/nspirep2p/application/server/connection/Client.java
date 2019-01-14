@@ -47,6 +47,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             case CHANGE_USERNAME:
                 connectionHandler.main.serverHandler.pushUsernameToClients(client, parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]));
                 break;
+
         }
     }
 

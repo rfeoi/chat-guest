@@ -21,6 +21,8 @@ public class ExecutedCommand {
                 error = "NOTEXISTS";
                 return;
             }
+            args = new String[splitCommand.length - 1];
+            System.arraycopy(splitCommand, 0, args, 1, splitCommand.length - 1);
         } else {
             try {
                 command = Command.valueOf(unparsed.toUpperCase());
@@ -37,5 +39,13 @@ public class ExecutedCommand {
 
     public String getError() {
         return error;
+    }
+
+    public Command getCommand() {
+        return command;
+    }
+
+    public String[] getArgs() {
+        return args;
     }
 }

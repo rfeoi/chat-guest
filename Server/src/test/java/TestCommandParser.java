@@ -1,10 +1,7 @@
 import nspirep2p.application.server.commandParser.Command;
 import nspirep2p.application.server.commandParser.CommandParser;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -18,13 +15,13 @@ public class TestCommandParser {
 
     @BeforeAll
     public void setup() {
-        parser = new CommandParser(null, null);
+        parser = new CommandParser();
     }
 
     @Test
     public void testNormalCommand() {
-        parser.inserManually("stop");
-        if (parser.getLastExecuted().isCorrect()) {
+        parser.insertManually("stop");
+        if (parser.wasLastCorrect()) {
             assertEquals(Command.STOP, parser.getLastExecuted().getCommand());
         } else {
             fail("Command not marked as Correct");
@@ -33,8 +30,8 @@ public class TestCommandParser {
 
     @Test
     public void testParentCommand() {
-        parser.inserManually("exit");
-        if (parser.getLastExecuted().isCorrect()) {
+        parser.insertManually("exit");
+        if (parser.wasLastCorrect()) {
             assertEquals(Command.STOP, parser.getLastExecuted().getCommand());
         } else {
             fail("Command not marked as Correct");
@@ -43,7 +40,7 @@ public class TestCommandParser {
 
     @Test
     public void testWrongCommand() {
-        parser.inserManually("testAWrongCommand");
+        parser.insertManually("testAWrongCommand");
         assertEquals(false, parser.getLastExecuted().isCorrect());
     }
 
