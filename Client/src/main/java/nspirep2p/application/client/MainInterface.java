@@ -1,13 +1,12 @@
 package nspirep2p.application.client;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 public class MainInterface extends JFrame {
     private JFrame frame;
 
-    private JTextArea textArea;
+    private JLabel messages;
 
     void start() {
         frame = new JFrame();
@@ -35,10 +34,10 @@ public class MainInterface extends JFrame {
     private void setChatPanel() {
         JPanel chatPanel = new JPanel(new BorderLayout());
 
-        textArea = new JTextArea();
-        textArea.append("Session started!");
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        messages = new JLabel();
+        messages.setText("<html>Session started!</html>");
+        //messages.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(messages);
 
         JTextField userInput = new JTextField();
         JButton sendButton = new JButton("Send!");
@@ -59,7 +58,9 @@ public class MainInterface extends JFrame {
     }
 
     public void setNewMessage(String from, String time, String message) {
-        textArea.append("\n[" + time + "] <b>" + from + ":</b> " + message);
+        String text = messages.getText();
+        text = text.replace("</html>", "");
+        messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
     }
 
 }
