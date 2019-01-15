@@ -15,9 +15,8 @@ import java.net.Socket;
 public class ConnectionHandler extends Client {
 
     private int port = 24466;
-    private Socket socket = null;
     private PrintWriter writer;
-    CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
+    private CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
 
        public ConnectionHandler() { }
 
@@ -56,7 +55,7 @@ public class ConnectionHandler extends Client {
 
     private boolean connectToServer(String ip, int port, String username) {
         try {
-            socket = new Socket(ip, port);
+            Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
             String[] handshake = parser.doHandshake(this);
             for (String s : handshake){

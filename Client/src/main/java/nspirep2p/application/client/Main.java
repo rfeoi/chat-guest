@@ -1,9 +1,9 @@
 package nspirep2p.application.client;
 
-/**
- * Main client class.
- * Starts client
- * Created by strifel on 05.11.2018.
+/*
+  Main client class.
+  Starts client
+  Created by strifel on 05.11.2018.
  */
 
 import nspirep2p.application.client.connection.ConnectionHandler;
@@ -61,7 +61,7 @@ public class Main {
         return sdf.format(cal.getTime());
     }
 
-    public String getUsername() {
+    String getUsername() {
         return username;
     }
 }

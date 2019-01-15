@@ -87,9 +87,9 @@ class UserInterface extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             String username = usernameField.getText();
-            if (username.isEmpty() || username.equals("")) { return; }
+            if (username.isEmpty()) { return; }
             String ipAddress = ipField.getText();
-            if (ipAddress.isEmpty() || ipAddress.equals("")) { return; }
+            if (ipAddress.isEmpty()) { return; }
             if (username.contains(" ")) {
                 makeVisible("You can't use spaces in your username!");
                 return;
