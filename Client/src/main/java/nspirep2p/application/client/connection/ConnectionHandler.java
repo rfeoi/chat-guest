@@ -5,7 +5,6 @@ import nspirep2p.application.client.fileHandling.UserPropetySave;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
-
 import java.io.*;
 import java.net.Socket;
 
@@ -20,7 +19,7 @@ public class ConnectionHandler extends Client {
     private PrintWriter writer;
     CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
 
-       public ConnectionHandler() {}
+       public ConnectionHandler() { }
 
     /**
      * tries to connect to the server
@@ -80,4 +79,11 @@ public class ConnectionHandler extends Client {
         }
         return true;
     }
+
+    public void sendMessage(String message) {
+        writer.println(message);
+        writer.flush();
+    }
+
+
 }

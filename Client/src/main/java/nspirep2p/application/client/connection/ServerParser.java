@@ -34,7 +34,7 @@ public class ServerParser implements Runnable{
                     System.out.println("Closing down connection!");
                     break;
                 }
-                Main.mainClass.mainInterface.setNewMessage("Server", "17:27", message);
+                Main.mainClass.mainInterface.setNewMessage("Server", Main.mainClass.getTime(), message);
             } catch (IOException | NullPointerException e) {
                 System.out.println("Closing down connection!");
                 //e.printStackTrace();

@@ -2,11 +2,23 @@ package nspirep2p.application.client;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
-public class MainInterface extends JFrame {
+public class MainInterface extends JFrame implements AWTEventListener {
     private JFrame frame;
-
+    private JButton sendButton;
     private JLabel messages;
+    private JTextField userInput;
+
+    MainInterface() {
+        //detects if a key is pressed
+        long eventMask = AWTEvent.KEY_EVENT_MASK;
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        toolkit.addAWTEventListener(this, eventMask);
+    }
 
     void start() {
         frame = new JFrame();
@@ -39,8 +51,9 @@ public class MainInterface extends JFrame {
         //messages.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(messages);
 
-        JTextField userInput = new JTextField();
-        JButton sendButton = new JButton("Send!");
+        userInput = new JTextField();
+        sendButton = new JButton("Send!");
+        sendButton.addActionListener(actionListener);
         JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.add(userInput, BorderLayout.CENTER);
         messagePanel.add(sendButton, BorderLayout.LINE_END);
@@ -63,4 +76,40 @@ public class MainInterface extends JFrame {
         messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
     }
 
+
+    private void sendMessage() {
+        String message = userInput.getText();
+        if (message.isEmpty()) return;
+        userInput.setText("");
+        Main.mainClass.connectionHandler.sendMessage(message);
+
+        setNewMessage(Main.mainClass.getUsername(), Main.mainClass.getTime(), message);
+    }
+
+
+
+
+
+
+
+
+    private ActionListener actionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!(e.getSource() instanceof JButton)) return;
+            JButton button = (JButton) e.getSource();
+
+            if (button==sendButton) {
+                sendMessage();
+            }
+        }
+    };
+
+    @Override
+    public void eventDispatched(AWTEvent event) {
+        int ID = event.getID();
+        if (ID == KeyEvent.KEY_PRESSED) {
+            if (event.paramString().contains("keyCode=10")) sendMessage();
+        }
+    }
 }

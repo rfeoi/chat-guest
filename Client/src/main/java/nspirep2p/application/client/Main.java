@@ -10,6 +10,8 @@ import nspirep2p.application.client.connection.ConnectionHandler;
 import nspirep2p.application.client.fileHandling.UserPropetySave;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * TODO:
@@ -23,6 +25,7 @@ public class Main {
     ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;
     public static Main mainClass;
+    private String username;
 
     public static void main(String[] args){
         mainClass = new Main();
@@ -45,8 +48,20 @@ public class Main {
                 e.printStackTrace();
             }
             userInterface.startWithText(properties[1], properties[0]);
+            username = properties[1];
         } else {
             userInterface.start();
         }
+    }
+
+
+    public String getTime() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(cal.getTime());
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
