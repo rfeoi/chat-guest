@@ -29,6 +29,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         for (String s : lines) {
             writer.write(s + "\n");
         }
+        writer.flush();
     }
 
     public boolean hasPermission(Permission permission){
@@ -47,7 +48,6 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             case CHANGE_USERNAME:
                 connectionHandler.main.serverHandler.pushUsernameToClients(client, parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]));
                 break;
-
         }
     }
 
@@ -56,7 +56,11 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         try {
             multipleLinesReader.clear();
             for (int i = 0; i < 3; i++) {
-                multipleLinesReader.read(reader.readLine());
+                String line = reader.readLine();
+                if (line.isEmpty()){
+                    i--;
+                }
+                multipleLinesReader.read(line);
             }
             String[] response = parser.parseClientHandshake(multipleLinesReader.getLines(), this);
             send(response);
@@ -70,7 +74,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             e.printStackTrace();
         }
         multipleLinesReader.clear();
-
+        System.out.println("New Client connected!");
         //Do normal package parsing
         while (userSocket.isConnected() && connectionHandler.clients.contains(this)) {
             try {

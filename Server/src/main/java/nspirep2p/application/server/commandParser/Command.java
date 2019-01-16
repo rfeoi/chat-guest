@@ -7,6 +7,7 @@ package nspirep2p.application.server.commandParser;
 public enum Command {
     STOP(null, 0, 0, "stop"),
     CLOSE(STOP, 0, 0, "close"),
+    EXIT(STOP, 0, 0, "exit"),
     BREAK(STOP, 0, 0, "break");
 
 

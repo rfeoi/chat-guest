@@ -23,6 +23,8 @@ public class TestCommands {
         assertEquals(0, Command.STOP.getMaxParameter());
         assertEquals(0, Command.CLOSE.getMinParameter());
         assertEquals(0, Command.CLOSE.getMaxParameter());
+        assertEquals(0, Command.EXIT.getMinParameter());
+        assertEquals(0, Command.EXIT.getMaxParameter());
     }
 
     /**
@@ -32,6 +34,7 @@ public class TestCommands {
     public void checkCommandParents() {
         assertEquals(Command.STOP, Command.BREAK.getParent());
         assertEquals(Command.STOP, Command.CLOSE.getParent());
+        assertEquals(Command.STOP, Command.EXIT.getParent());
         assertNull(Command.STOP.getParent());
     }
 

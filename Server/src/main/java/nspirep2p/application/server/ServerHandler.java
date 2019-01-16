@@ -60,6 +60,7 @@ public class ServerHandler {
      */
     private Client getClientByUsername(String username) {
         for (Client client : connectionHandler.getClients()) {
+            if (client.username == null) continue;
             if (client.username.equals(username)) return client;
         }
         return null;

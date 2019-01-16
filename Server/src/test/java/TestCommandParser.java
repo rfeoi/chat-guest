@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  * Created by strifel on 17.12.2018.
  */
 public class TestCommandParser {
-    private CommandParser parser;
+    private static CommandParser parser;
 
     @BeforeAll
-    public void setup() {
+    public static void setup() {
         parser = new CommandParser();
     }
 
@@ -30,7 +30,7 @@ public class TestCommandParser {
 
     @Test
     public void testParentCommand() {
-        parser.insertManually("exit");
+        parser.insertManually("close");
         if (parser.wasLastCorrect()) {
             assertEquals(Command.STOP, parser.getLastExecuted().getCommand());
         } else {

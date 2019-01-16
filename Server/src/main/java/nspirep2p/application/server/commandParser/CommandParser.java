@@ -10,7 +10,7 @@ public class CommandParser {
     private ArrayList<ExecutedCommand> commandHistory;
 
     public CommandParser() {
-
+        commandHistory = new ArrayList<>();
     }
 
     public void insertManually(String insertable){
