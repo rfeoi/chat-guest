@@ -4,18 +4,22 @@ import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.Permission;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ServerHandler {
 
     private Main main;
     private ConnectionHandler connectionHandler;
-    private HashMap<Client, Boolean> tempChannels;
+    private ArrayList<Client> privateChannels;
+    private HashMap<Client, ArrayList<Client>> allowedClients;
 
     ServerHandler(Main main) {
         this.main = main;
         connectionHandler = main.connectionHandler;
-        tempChannels = new HashMap<Client, Boolean>();
+        privateChannels = new ArrayList<>();
+        allowedClients = new HashMap<>();
     }
 
     /**
@@ -37,13 +41,33 @@ public class ServerHandler {
      */
     public void createTempChannel(Client client) {
         if (client.hasPermission(Permission.CREATE_TEMP_CHANNEL)) {
-            if (!tempChannels.get(client)) {
-                tempChannels.put(client, true);
+            if (!privateChannels.contains(client)) {
+                privateChannels.add(client);
+                connectionHandler.broadcast(connectionHandler.parser.createTempChannel(client));
+                allowedClients.put(client, new ArrayList<Client>());
+                allowedClients.get(client).add(client);
             } else {
                 sendErrorMessage(client, "You already have a Channel. Join them instead.");
             }
         } else {
             sendErrorMessage(client, Permission.CREATE_TEMP_CHANNEL.getNoPermissionError());
+        }
+    }
+
+    /**
+     * Invite a client to your channel
+     * Technically this adds the permission to join this channel and then sends the invitation prompt
+     * @param client the inviter or (client owner)
+     * @param otherClient
+     */
+    public void inviteClient(Client client, String otherClient){
+        Client client2 = getClientByUsername(otherClient);
+        if (client2 == null) return;
+        allowedClients.get(client).add(client2);
+        try {
+            client2.send(connectionHandler.parser.inviteClient(client, client2));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -27,10 +27,10 @@ public class Main {
     public static Main mainClass;
 
     public static void main(String[] args) {
-        System.out.println("Welcome to NSpireP2P Server application!");
+        System.out.println("Welcome to Chat-guest Server application!");
         System.out.println("This is an opensource project licensed under MIT License.");
         System.out.println("This is provided as it is without any warranty!");
-        System.out.println("Feel free to contribute to https://github.com/strifel/nspire-p2p.");
+        System.out.println("Feel free to contribute to https://github.com/rfeoi/chat-guest.");
         mainClass = new Main();
         try {
             mainClass.start();

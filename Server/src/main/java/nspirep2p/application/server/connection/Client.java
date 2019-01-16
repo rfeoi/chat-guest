@@ -25,7 +25,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         parser = connectionHandler.parser;
     }
 
-    void send(String[] lines) throws IOException {
+    public void send(String[] lines) throws IOException {
         for (String s : lines) {
             writer.write(s + "\n");
         }
@@ -36,7 +36,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         return connectionHandler.main.permissionManagment.clientHasPermission(this, permission);
     }
 
-    private void parsePacket(String[] lines) throws WrongPackageFormatException {
+    private void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         Client client = connectionHandler.main.serverHandler.getClientByUUID(parsed.getAuthUUID());
         if (hasPermission(Permission.CONTROL_OTHER) && client != this){
@@ -47,6 +47,12 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
                 connectionHandler.main.serverHandler.pushUsernameToClients(client, parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]));
+                break;
+            case CREATE_TEMP_CHANNEL:
+                connectionHandler.main.serverHandler.createTempChannel(this);
+                break;
+            case INVITE:
+                connectionHandler.main.serverHandler.inviteClient(this, Function.INVITE.getParameters()[0]);
                 break;
         }
     }
@@ -81,17 +87,19 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 multipleLinesReader.read(reader.readLine());
                 if (multipleLinesReader.isEnd()) {
                     try {
-                        parsePacket(multipleLinesReader.getLines());
+                        parsePackage(multipleLinesReader.getLines());
                     } catch (WrongPackageFormatException e) {
                         send(parser.wrongPackageError());
                     }
                     multipleLinesReader.clear();
                 }
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
+                connectionHandler.clients.remove(this);
             }
         }
 
+        //TODO WHENEVER CLOSE INFORM CLIENTS
         //Do close socket
         if (userSocket.isConnected()) {
             try {
