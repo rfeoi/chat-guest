@@ -1,6 +1,8 @@
 package nspirep2p.application.client.connection;
 
 import nspirep2p.application.client.Main;
+import nspirep2p.communication.protocol.v1.MultipleLinesReader;
+import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +17,7 @@ public class ServerParser implements Runnable{
 
     private Socket socket = null;
     private BufferedReader reader;
+    private MultipleLinesReader multipleLinesReader;
 
     ServerParser (Socket socket) {
         try {
@@ -34,7 +37,18 @@ public class ServerParser implements Runnable{
                     System.out.println("Closing down connection!");
                     break;
                 }
-                Main.mainClass.mainInterface.setNewMessage("Server", Main.mainClass.getTime(), message);
+                //Hier einfügen
+                multipleLinesReader.read(reader.readLine());
+                if (multipleLinesReader.isEnd()) {
+                    try {
+                        //parse Package
+                        Main.mainClass.connectionHandler.parsePackage(multipleLinesReader.getLines());
+                    } catch (WrongPackageFormatException e) {
+                        System.out.println("Wrong Package");
+                    }
+                    multipleLinesReader.clear();
+                }
+                //Main.mainClass.mainInterface.setNewMessage("Server", Main.mainClass.getTime(), message);
             } catch (IOException | NullPointerException e) {
                 System.out.println("Closing down connection!");
                 //e.printStackTrace();

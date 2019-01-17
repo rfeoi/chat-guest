@@ -5,6 +5,10 @@ import nspirep2p.application.client.fileHandling.UserPropetySave;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
+import nspirep2p.communication.protocol.v1.Function;
+import nspirep2p.communication.protocol.v1.Package;
+import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -65,10 +69,6 @@ public class ConnectionHandler extends Client {
             for (String s: usernameChange){
                 writer.println(s);
             }
-            String[] createTemp = parser.createTempChannel(this);
-            for (String s: createTemp){
-                writer.println(s);
-            }
             writer.flush();
             Thread thread = new Thread(new ServerParser(socket));
             thread.start();
@@ -82,6 +82,28 @@ public class ConnectionHandler extends Client {
     public void sendMessage(String message) {
         writer.println(message);
         writer.flush();
+    }
+
+    void parsePackage(String[] lines) throws WrongPackageFormatException {
+        Package parsed = parser.parsePackage(lines);
+        switch (parsed.getFunction()) {
+            case CHANGE_USERNAME:
+                Main.mainClass.mainInterfaceData.changeUsername("Old", "New");
+                Main.mainClass.mainInterface.reloadUsers();
+                break;
+            case MOVE:
+                //A client has been moved. (Where?)
+                break;
+            case INVITE:
+                //You have been invited. (To what?)
+                break;
+            case CREATE_TEMP_CHANNEL:
+                //There is a new channel. Show it in the channel view.
+                break;
+            case DELETE_TEMP_CHANNEL:
+                //A channel has been removed. Delete it.
+                break;
+        }
     }
 
 

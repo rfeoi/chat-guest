@@ -22,8 +22,9 @@ import java.util.Calendar;
 public class Main {
     private UserInterface userInterface;
     public MainInterface mainInterface;
-    ConnectionHandler connectionHandler;
+    public ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;
+    public MainInterfaceData mainInterfaceData;
     public static Main mainClass;
     private String username;
 
@@ -37,6 +38,7 @@ public class Main {
         connectionHandler = new ConnectionHandler();
         userPropetySave = new UserPropetySave();
         mainInterface = new MainInterface();
+        mainInterfaceData = new MainInterfaceData();
     }
 
     private void start() {

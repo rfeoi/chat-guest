@@ -12,6 +12,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
     private JButton sendButton;
     private JLabel messages;
     private JTextField userInput;
+    private JTextArea users;
 
     MainInterface() {
         //detects if a key is pressed
@@ -65,8 +66,8 @@ public class MainInterface extends JFrame implements AWTEventListener {
 
     private void setUserPanel() {
         JPanel userPanel = new JPanel();
-        JLabel l3 = new JLabel("User");
-        userPanel.add(l3);
+        users = new JTextArea("Users");
+        userPanel.add(users);
         frame.add(userPanel, BorderLayout.LINE_END);
     }
 
@@ -86,7 +87,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         setNewMessage(Main.mainClass.getUsername(), Main.mainClass.getTime(), message);
     }
 
+    public void reloadUsers() {
+        users.setText(Main.mainClass.mainInterfaceData.getUsers());
 
+    }
 
 
 
