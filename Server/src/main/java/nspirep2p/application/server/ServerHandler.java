@@ -1,11 +1,14 @@
 package nspirep2p.application.server;
 
+import com.sun.deploy.util.ArrayUtil;
+import com.sun.tools.javac.util.ArrayUtils;
 import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.Permission;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ServerHandler {
@@ -46,6 +49,7 @@ public class ServerHandler {
                 connectionHandler.broadcast(connectionHandler.parser.createTempChannel(client));
                 allowedClients.put(client, new ArrayList<Client>());
                 allowedClients.get(client).add(client);
+                forceMove(client, client.username);
             } else {
                 sendErrorMessage(client, "You already have a Channel. Join them instead.");
             }
@@ -103,4 +107,58 @@ public class ServerHandler {
         return null;
     }
 
+    /**
+     * Get all clients which are in a channel
+     * @param channel which you want to check
+     * @return the clients as array
+     */
+    public Client[] getClientsInChannel(String channel) {
+        ArrayList<Client> clients = new ArrayList<>();
+        for (Client client : connectionHandler.getClients()){
+            if (client.getChannel().equals(channel)){
+                clients.add(client);
+            }
+        }
+        return Arrays.copyOf(clients.toArray(), clients.size(), Client[].class);
+    }
+
+    /**
+     * Move the client without checking anything
+     * @param client the client which should be used
+     * @param channel the channel where moved to
+     */
+    public void forceMove(Client client, String channel){
+        connectionHandler.broadcast(connectionHandler.parser.moveClient(client, channel));
+        client.setChannel(channel);
+    }
+
+    /**
+     * Check if a user owns a private channel
+     * @param client the client which should be checked
+     * @return if the private channel exists
+     */
+    public boolean hasPrivateChannel(Client client){
+        return privateChannels.contains(client);
+    }
+
+    /**
+     * Check if a user owns a private channel
+     * @param name the client name which should be checked
+     * @return if the private channel exists
+     */
+    public boolean doesPrivateChannelExists(String name){
+        return hasPrivateChannel(getClientByUsername(name));
+    }
+
+    /**
+     * Move a client (check if possible before)
+     * @param client the client
+     * @param channel the channel
+     */
+    public void move(Client client, String channel){
+        //TODO: public channels
+        if (doesPrivateChannelExists(channel)){
+            forceMove(client, channel);
+        }
+    }
 }

@@ -9,6 +9,7 @@ import java.net.Socket;
 
 public class Client extends nspirep2p.communication.protocol.Client implements Runnable {
     private String role = "user";
+    private String channel = "";
     Socket userSocket;
     private ConnectionHandler connectionHandler;
     private CommunicationParser parser;
@@ -53,6 +54,9 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 break;
             case INVITE:
                 connectionHandler.main.serverHandler.inviteClient(this, Function.INVITE.getParameters()[0]);
+                break;
+            case MOVE:
+                connectionHandler.main.serverHandler.move(this, parsed.getArg(Function.MOVE.getParameters()[1]));
                 break;
         }
     }
@@ -120,5 +124,13 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getChannel() {
+        return channel;
     }
 }
