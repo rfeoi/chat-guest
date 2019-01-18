@@ -79,17 +79,24 @@ public class ConnectionHandler extends Client {
         return true;
     }
 
-    public void sendMessage(String message) {
-        writer.println(message);
+    public void sendMessage(String[] message) {
+        for (String line:message) {
+            writer.println(line);
+        }
         writer.flush();
+    }
+
+
+    public void changeUsername(String newUsername) {
+        String[] usernameChange = parser.pushUsername(this, newUsername);
+        sendMessage(usernameChange);
     }
 
     void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
-                Main.mainClass.mainInterfaceData.changeUsername("Old", "New");
-                Main.mainClass.mainInterface.reloadUsers();
+                Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
                 break;
             case MOVE:
                 //A client has been moved. (Where?)
@@ -98,12 +105,13 @@ public class ConnectionHandler extends Client {
                 //You have been invited. (To what?)
                 break;
             case CREATE_TEMP_CHANNEL:
-                //There is a new channel. Show it in the channel view.
+                Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
                 break;
             case DELETE_TEMP_CHANNEL:
-                //A channel has been removed. Delete it.
+                Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
                 break;
         }
+        Main.mainClass.mainInterface.reload();
     }
 
 

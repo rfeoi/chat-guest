@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainInterfaceData {
-    private List<String> users;
+    private List<String> users, channel;
 
     public MainInterfaceData() {
-        users = new ArrayList<String>();
+        users = new ArrayList<>();
+        channel = new ArrayList<>();
     }
 
     void addUser(String username) {
@@ -34,6 +35,34 @@ public class MainInterfaceData {
         String returnString = "";
         for (String user: users) {
             returnString += user + "\n";
+        }
+        return returnString;
+    }
+
+    public void addChannel(String channelName) {
+        channel.add(channelName);
+    }
+
+    public void removeChannel(String channelName) {
+        channel.remove(channelName);
+    }
+
+    public void changeChannelName(String oldChannelName, String newChannelName) {
+        int i = 0;
+        for (String aChannel: channel) {
+            if (aChannel.equals(oldChannelName)) {
+                channel.remove(i);
+                channel.add(i, newChannelName);
+                break;
+            }
+            i = i + 1;
+        }
+    }
+
+    String getChannel() {
+        String returnString = "";
+        for (String aChannel: channel) {
+            returnString += aChannel + "\n";
         }
         return returnString;
     }

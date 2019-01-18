@@ -26,7 +26,7 @@ public class Main {
     public UserPropetySave userPropetySave;
     public MainInterfaceData mainInterfaceData;
     public static Main mainClass;
-    private String username;
+    private String username, ip;
 
     public static void main(String[] args){
         mainClass = new Main();
@@ -51,6 +51,7 @@ public class Main {
             }
             userInterface.startWithText(properties[1], properties[0]);
             username = properties[1];
+            ip = properties[0];
         } else {
             userInterface.start();
         }
@@ -66,4 +67,6 @@ public class Main {
     String getUsername() {
         return username;
     }
+
+    String getIP() { return ip; }
 }

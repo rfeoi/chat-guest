@@ -1,18 +1,21 @@
 package nspirep2p.application.client;
 
+import nspirep2p.application.client.fileHandling.UserPropetySave;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class MainInterface extends JFrame implements AWTEventListener {
     private JFrame frame;
-    private JButton sendButton;
+    private JButton sendButton, changeUsernameButton;
     private JLabel messages;
     private JTextField userInput;
-    private JTextArea users;
+    private JTextArea users, channel;
 
     MainInterface() {
         //detects if a key is pressed
@@ -35,13 +38,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
         setChannelPanel();
         setChatPanel();
         setUserPanel();
-    }
-
-    private void setChannelPanel() {
-        JPanel channelPanel = new JPanel();
-        JLabel l1 = new JLabel("Channel: ");
-        channelPanel.add(l1);
-        frame.add(channelPanel, BorderLayout.LINE_START);
+        setButtonPane();
     }
 
     private void setChatPanel() {
@@ -64,6 +61,13 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(chatPanel, BorderLayout.CENTER);
     }
 
+    private void setChannelPanel() {
+        JPanel channelPanel = new JPanel();
+        channel = new JTextArea("Channel");
+        channelPanel.add(channel);
+        frame.add(channelPanel, BorderLayout.LINE_START);
+    }
+
     private void setUserPanel() {
         JPanel userPanel = new JPanel();
         users = new JTextArea("Users");
@@ -71,7 +75,16 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(userPanel, BorderLayout.LINE_END);
     }
 
-    public void setNewMessage(String from, String time, String message) {
+    private void setButtonPane() {
+        JPanel buttonPanel = new JPanel();
+        changeUsernameButton = new JButton("Nutzernamen aendern");
+        changeUsernameButton.addActionListener(actionListener);
+        buttonPanel.add(changeUsernameButton);
+        frame.add(buttonPanel, BorderLayout.PAGE_START);
+
+    }
+
+    private void setNewMessage(String from, String time, String message) {
         String text = messages.getText();
         text = text.replace("</html>", "");
         messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
@@ -82,14 +95,28 @@ public class MainInterface extends JFrame implements AWTEventListener {
         String message = userInput.getText();
         if (message.isEmpty()) return;
         userInput.setText("");
-        Main.mainClass.connectionHandler.sendMessage(message);
+        Main.mainClass.connectionHandler.sendMessage(new String[]{message});
 
         setNewMessage(Main.mainClass.getUsername(), Main.mainClass.getTime(), message);
     }
 
-    public void reloadUsers() {
-        users.setText(Main.mainClass.mainInterfaceData.getUsers());
+    private void changeUsername() {
+        String username = "";
+        while (username.isEmpty() || username.contains(" ")) {
+            username = JOptionPane.showInputDialog("Geben Sie hier ihren neuen Benutzernamen ein.", Main.mainClass.getUsername());
+            System.out.println(username);
+        }
+        try {
+            Main.mainClass.userPropetySave.generateConfigFile(Main.mainClass.getIP(), username);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+           Main.mainClass.connectionHandler.changeUsername(username);
+    }
 
+    public void reload() {
+        users.setText(Main.mainClass.mainInterfaceData.getUsers());
+        channel.setText(Main.mainClass.mainInterfaceData.getChannel());
     }
 
 
@@ -102,9 +129,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         public void actionPerformed(ActionEvent e) {
             if (!(e.getSource() instanceof JButton)) return;
             JButton button = (JButton) e.getSource();
-
             if (button==sendButton) {
                 sendMessage();
+            } else if (button == changeUsernameButton) {
+                changeUsername();
             }
         }
     };
