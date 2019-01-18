@@ -154,9 +154,21 @@ public class ServerHandler {
      * @param channel the channel
      */
     public void move(Client client, String channel){
+        //Remove channel when owner quits
+        if (privateChannels.contains(client)) {
+            deletePrivateChannel(client);
+        }
+        //Move client
         //TODO: public channels
         if (doesPrivateChannelExists(channel) && (allowedClients.get(getClientByUsername(channel)).contains(client) || client.hasPermission(Permission.JOIN_ANY))) {
             forceMove(client, channel);
         }
     }
+
+    private void deletePrivateChannel(Client owner) {
+        privateChannels.remove(owner);
+        connectionHandler.broadcast(connectionHandler.parser.removeTempChannel(owner));
+    }
+
+    //TODO add quit method
 }
