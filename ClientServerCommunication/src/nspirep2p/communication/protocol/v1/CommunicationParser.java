@@ -236,6 +236,79 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     *
+     * For client:
+     * returns uuid
+     *
+     * For Server:
+     * sends all channels
+     *
+     */
+    public String[] getChannels(Client client,String[] channels){
+        if(clientType == ClientType.SERVER){
+            String[] push = new String[3];
+            push[0] = "function=GET_CHANNELS";
+            push[1] = Function.GET_CHANNELS.getParameters()[0] + "=";
+            for (String s:channels) {
+                push[1] += s+",";
+            }
+            push[1] = push[1].substring(0, push[1].length() -1);
+            push[2] = END_BREAK;
+            return push;
+        }
+        else if(clientType == ClientType.CLIENT){
+            String[] push = new String[3];
+            push[0] = "function=GET_CHANNELS";
+            push[1] = Function.GET_CHANNELS.getParameters()[1] + "=";
+            push[1] += client.uuid;
+            push[2] = END_BREAK;
+            return push;
+
+        }
+        return null;
+
+    }
+    public String[] sendError(Client client,String error){
+        if(clientType == ClientType.SERVER){
+            String[] push = new String[2];
+            push[0] = Function.SEND_ERROR.getParameters()[0] +"=";
+            push[0] += error;
+            push[1] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
+    public String[] getClients(Client client,Client[] chlients, boolean sendUUID){
+        if(clientType == ClientType.SERVER){
+            String[] push = new String[4];
+            push[0] = "function=GET_CHANNELS";
+            push[1] = Function.GET_CLIENTS.getParameters()[0] + "=";
+            push[2] = Function.GET_CLIENTS.getParameters()[1] + "=";
+            for (Client s:chlients) {
+                push[1] += s.username+",";
+                if (sendUUID){
+                    push[2] += s.uuid + ",";
+                }
+            }
+            push[1] = push[1].substring(0, push[1].length() -1);
+            push[2] = push[2].substring(0, push[2].length() -1);
+            push[3] = END_BREAK;
+            return push;
+        }
+        else if(clientType == ClientType.CLIENT){
+            String[] push = new String[3];
+            push[0] = "function=GET_CLIENTS";
+            push[1] = Function.GET_CLIENTS.getParameters()[1] + client.uuid;
+            push[2] = END_BREAK;
+            return push;
+
+        }
+        return null;
+
+    }
+
 
 
     /**
@@ -305,5 +378,7 @@ public class CommunicationParser {
             clientPackage.setWaitForAnswer(false);
         return clientPackage;
     }
+
+
 
 }
