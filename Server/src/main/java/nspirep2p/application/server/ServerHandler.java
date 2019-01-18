@@ -1,7 +1,5 @@
 package nspirep2p.application.server;
 
-import com.sun.deploy.util.ArrayUtil;
-import com.sun.tools.javac.util.ArrayUtils;
 import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.Permission;
@@ -157,7 +155,7 @@ public class ServerHandler {
      */
     public void move(Client client, String channel){
         //TODO: public channels
-        if (doesPrivateChannelExists(channel)){
+        if (doesPrivateChannelExists(channel) && (allowedClients.get(getClientByUsername(channel)).contains(client) || client.hasPermission(Permission.JOIN_ANY))) {
             forceMove(client, channel);
         }
     }

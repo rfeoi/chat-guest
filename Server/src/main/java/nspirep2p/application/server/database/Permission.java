@@ -5,6 +5,7 @@ public enum Permission {
     READ_CHANNEL("Sorry, you are not allowed to see normal channel. Try creating your own."),
     CREATE_TEMP_CHANNEL("Sorry, you are not allowed to create your own Channel, use public instead."),
     //Moderator permissions
+    JOIN_ANY,
     MANAGE_PUBLIC_CHANNEL,
     KICK_USER,
     //Admin permissions

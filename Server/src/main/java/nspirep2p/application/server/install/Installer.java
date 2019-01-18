@@ -9,7 +9,6 @@ import org.tmatesoft.sqljet.core.SqlJetException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -76,7 +75,7 @@ public class Installer {
      */
     private void createDefaultRole(String adminPW) throws SqlJetException, NoSuchAlgorithmException, UnsupportedEncodingException {
         Main.mainClass.permissionManagment.createNewRole("user", new Permission[]{Permission.READ_CHANNEL, Permission.CREATE_TEMP_CHANNEL}, "123");
-        Main.mainClass.permissionManagment.createNewRole("admin", new Permission[]{Permission.READ_CHANNEL, Permission.CONTROL_OTHER, Permission.CREATE_TEMP_CHANNEL, Permission.KICK_USER, Permission.MANAGE_PUBLIC_CHANNEL, Permission.READ_UUID}, adminPW);
+        Main.mainClass.permissionManagment.createNewRole("admin", new Permission[]{Permission.READ_CHANNEL, Permission.CONTROL_OTHER, Permission.CREATE_TEMP_CHANNEL, Permission.KICK_USER, Permission.MANAGE_PUBLIC_CHANNEL, Permission.READ_UUID, Permission.JOIN_ANY}, adminPW);
     }
 
 }
