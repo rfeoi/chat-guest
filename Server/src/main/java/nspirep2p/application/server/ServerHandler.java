@@ -4,7 +4,6 @@ import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.Permission;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,11 +65,8 @@ public class ServerHandler {
         Client client2 = getClientByUsername(otherClient);
         if (client2 == null) return;
         allowedClients.get(client).add(client2);
-        try {
-            client2.send(connectionHandler.parser.inviteClient(client, client2));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        client2.send(connectionHandler.parser.inviteClient(client, client2));
+
     }
 
 
@@ -165,10 +161,29 @@ public class ServerHandler {
         }
     }
 
+    /**
+     * Delete a private channel
+     *
+     * @param owner of the channel
+     */
     private void deletePrivateChannel(Client owner) {
-        privateChannels.remove(owner);
-        connectionHandler.broadcast(connectionHandler.parser.removeTempChannel(owner));
+        if (privateChannels.contains(owner)) {
+            for (Client client : getClientsInChannel(owner.username)) {
+                client.send(connectionHandler.parser.moveClient(client, "none"));
+            }
+            privateChannels.remove(owner);
+            connectionHandler.broadcast(connectionHandler.parser.removeTempChannel(owner));
+        }
     }
 
-    //TODO add quit method
+    /**
+     * Quit a client
+     *
+     * @param client which quits
+     */
+    public void quit(Client client) {
+        connectionHandler.clients.remove(client);
+        connectionHandler.deleteThread(client);
+        deletePrivateChannel(client);
+    }
 }

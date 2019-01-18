@@ -1,15 +1,15 @@
 package nspirep2p.application.server.connection;
 
 import nspirep2p.application.server.database.Permission;
-import nspirep2p.communication.protocol.v1.*;
 import nspirep2p.communication.protocol.v1.Package;
+import nspirep2p.communication.protocol.v1.*;
 
 import java.io.*;
 import java.net.Socket;
 
 public class Client extends nspirep2p.communication.protocol.Client implements Runnable {
     private String role = "user";
-    private String channel = "";
+    private String channel = "none";
     Socket userSocket;
     private ConnectionHandler connectionHandler;
     private CommunicationParser parser;
@@ -26,11 +26,16 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         parser = connectionHandler.parser;
     }
 
-    public void send(String[] lines) throws IOException {
-        for (String s : lines) {
-            writer.write(s + "\n");
+    public void send(String[] lines) {
+        try {
+            for (String s : lines) {
+                writer.write(s + "\n");
+            }
+            writer.flush();
+        } catch (IOException e) {
+            connectionHandler.main.serverHandler.quit(this);
         }
-        writer.flush();
+
     }
 
     public boolean hasPermission(Permission permission){
@@ -75,13 +80,14 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             String[] response = parser.parseClientHandshake(multipleLinesReader.getLines(), this);
             send(response);
             if (!response[0].equals("accept")) {
-                connectionHandler.connections.remove(Thread.currentThread());
+                connectionHandler.main.serverHandler.quit(this);
                 return;
             }
             connectionHandler.clients.add(this);
         } catch (IOException e) {
             System.err.println("Exception while handeling client handshake");
             e.printStackTrace();
+            connectionHandler.main.serverHandler.quit(this);
         }
         multipleLinesReader.clear();
         System.out.println("New Client connected!");
@@ -99,7 +105,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 }
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
-                connectionHandler.clients.remove(this);
+                connectionHandler.main.serverHandler.quit(this);
             }
         }
 
@@ -114,7 +120,10 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 e.printStackTrace();
             }
         }
-        if (connectionHandler.clients.contains(this)) connectionHandler.clients.remove(this);
+        connectionHandler.main.serverHandler.quit(this);
+    }
+
+    void removeThread() {
         connectionHandler.connections.remove(Thread.currentThread());
     }
 
