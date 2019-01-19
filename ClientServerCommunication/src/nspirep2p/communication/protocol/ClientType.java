@@ -7,4 +7,6 @@ package nspirep2p.communication.protocol;
 public enum ClientType {
     SERVER,
     CLIENT;
+
+
 }
