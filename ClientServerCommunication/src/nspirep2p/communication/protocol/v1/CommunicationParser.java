@@ -3,6 +3,9 @@ package nspirep2p.communication.protocol.v1;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
@@ -91,7 +94,7 @@ public class CommunicationParser {
             push = new String[4];
             push[0] = "function=CHANGE_USERNAME";
             push[1] = "auth.uuid=" + client.uuid;
-            push[2] = "client.username=" + username;
+            push[2] = "username" + username;
             push[3] = END_WAIT;
             return push;
         } else if (clientType == ClientType.SERVER) {
@@ -239,11 +242,14 @@ public class CommunicationParser {
     /**
      *
      * For client:
-     * returns uuid
+     * Send an request to server to get Channels Listed
+     * Gives you a comma separated list with channels
      *
      * For Server:
-     * sends all channels
-     *
+     * Send all Channels to client
+     * @param client the client which requested
+     * @param channels all channels (null on client)
+     * @return push
      */
     public String[] getChannels(Client client,String[] channels){
         if(clientType == ClientType.SERVER){
@@ -260,27 +266,28 @@ public class CommunicationParser {
         else if(clientType == ClientType.CLIENT){
             String[] push = new String[3];
             push[0] = "function=GET_CHANNELS";
-            push[1] = Function.GET_CHANNELS.getParameters()[1] + "=";
-            push[1] += client.uuid;
-            push[2] = END_BREAK;
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = END_WAIT;
             return push;
 
         }
         return null;
 
     }
-    public String[] sendError(Client client,String error){
-        if(clientType == ClientType.SERVER){
-            String[] push = new String[2];
-            push[0] = Function.SEND_ERROR.getParameters()[0] +"=";
-            push[0] += error;
-            push[1] = END_BREAK;
-            return push;
-        }
-        return null;
-    }
 
-    public String[] getClients(Client client,Client[] chlients, boolean sendUUID){
+
+    /**
+     * For client:
+     * Send Request to server to list clients.
+     * For Server:
+     * Returns list with all clients to client
+     *
+     * @param client   the client which requested
+     * @param chlients all clients (null on client)
+     * @param sendUUID if uuids should be send too (false on client)
+     * @return push
+     */
+    public String[] getClients(Client client, Client[] chlients, boolean sendUUID) {
         if(clientType == ClientType.SERVER){
             String[] push = new String[4];
             push[0] = "function=GET_CHANNELS";
@@ -296,12 +303,11 @@ public class CommunicationParser {
             push[2] = push[2].substring(0, push[2].length() -1);
             push[3] = END_BREAK;
             return push;
-        }
-        else if(clientType == ClientType.CLIENT){
+        } else if (clientType == ClientType.CLIENT) {
             String[] push = new String[3];
             push[0] = "function=GET_CLIENTS";
-            push[1] = Function.GET_CLIENTS.getParameters()[1] + client.uuid;
-            push[2] = END_BREAK;
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = END_WAIT;
             return push;
 
         }
@@ -309,7 +315,47 @@ public class CommunicationParser {
 
     }
 
+    /**
+     * Only from server to client:
+     * Send an error
+     *
+     * @param error the error which should be sent (could be any string (e.g. Shutdown now or You do not have the right to do that)
+     * @return push
+     */
+    public String[] sendError(String error) {
+        if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=SEND_ERROR";
+            push[1] = Function.SEND_ERROR.getParameters()[0] + "=" + error;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return new String[]{};
+    }
 
+    /**
+     * Enter a group with a password
+     *
+     * @param client            the client which wants to enter
+     * @param cleartextPassword the password
+     * @return
+     */
+    public String[] enterGroup(Client client, String cleartextPassword) {
+        if (clientType == ClientType.CLIENT) {
+            try {
+                String hashed = new String(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                String[] push = new String[4];
+                push[0] = "function=ENTER_GROUP";
+                push[1] = "auth.uuid=" + client.uuid;
+                push[2] = Function.ENTER_GROUP.getParameters()[0] + "=" + hashed;
+                push[3] = END_BREAK;
+                return push;
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        return new String[]{};
+    }
 
     /**
      * Used to parse packages

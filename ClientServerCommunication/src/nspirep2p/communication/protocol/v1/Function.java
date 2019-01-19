@@ -13,9 +13,10 @@ public enum Function {
     MOVE(new String[]{"username", "channel_name"}),
     INVITE(new String[]{"username"}),
     SEND_MESSAGE(new String[]{"channel","message","username"}),
-    GET_CLIENTS(new String[]{"names", "uuid"}),
-    GET_CHANNELS(new String[]{"channels","uuid"}),
-    SEND_ERROR(new String[]{"error"});
+    GET_CLIENTS(new String[]{"names"}),
+    GET_CHANNELS(new String[]{"channels"}),
+    SEND_ERROR(new String[]{"error"}),
+    ENTER_GROUP(new String[]{"hashed"});
 
     String[] parameters;
 
