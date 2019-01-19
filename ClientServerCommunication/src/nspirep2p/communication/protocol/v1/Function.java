@@ -11,7 +11,12 @@ public enum Function {
     CREATE_TEMP_CHANNEL(new String[]{"username"}),
     DELETE_TEMP_CHANNEL(new String[]{"username"}),
     MOVE(new String[]{"username", "channel_name"}),
-    INVITE(new String[]{"username"});
+    INVITE(new String[]{"username"}),
+    SEND_MESSAGE(new String[]{"channel","message","username"}),
+    GET_CLIENTS(new String[]{"names"}),
+    GET_CHANNELS(new String[]{"channels"}),
+    SEND_ERROR(new String[]{"error"}),
+    ENTER_GROUP(new String[]{"hashed"});
 
     String[] parameters;
 
@@ -23,3 +28,4 @@ public enum Function {
         return parameters;
     }
 }
+
