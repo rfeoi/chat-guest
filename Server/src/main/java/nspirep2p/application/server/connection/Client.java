@@ -10,7 +10,7 @@ import java.net.Socket;
 public class Client extends nspirep2p.communication.protocol.Client implements Runnable {
     private String role = "user";
     private String channel = "none";
-    Socket userSocket;
+    private Socket userSocket;
     private ConnectionHandler connectionHandler;
     private CommunicationParser parser;
     private MultipleLinesReader multipleLinesReader;
@@ -48,20 +48,35 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         if (hasPermission(Permission.CONTROL_OTHER) && client != this){
             client = this;
         }else{
-            //TODO send Error
+            connectionHandler.main.serverHandler.sendMessage(this, Permission.CONTROL_OTHER.getNoPermissionError());
         }
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
                 connectionHandler.main.serverHandler.pushUsernameToClients(client, parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]));
                 break;
             case CREATE_TEMP_CHANNEL:
-                connectionHandler.main.serverHandler.createTempChannel(this);
+                connectionHandler.main.serverHandler.createTempChannel(client);
                 break;
             case INVITE:
-                connectionHandler.main.serverHandler.inviteClient(this, Function.INVITE.getParameters()[0]);
+                connectionHandler.main.serverHandler.inviteClient(client, Function.INVITE.getParameters()[0]);
                 break;
             case MOVE:
-                connectionHandler.main.serverHandler.move(this, parsed.getArg(Function.MOVE.getParameters()[1]));
+                connectionHandler.main.serverHandler.move(client, parsed.getArg(Function.MOVE.getParameters()[1]));
+                break;
+            case SEND_MESSAGE:
+                connectionHandler.main.serverHandler.sendMessage(client, parsed.getArg(Function.SEND_MESSAGE.getParameters()[1]));
+                break;
+            case ENTER_GROUP:
+                connectionHandler.main.serverHandler.enterGroup(client, parsed.getArg(Function.ENTER_GROUP.getParameters()[0]));
+                break;
+            case GET_CLIENTS:
+                connectionHandler.main.serverHandler.sendClientsToClient(this);
+                break;
+            case GET_CHANNELS:
+                connectionHandler.main.serverHandler.sendChannelsToClient(this);
+                break;
+            default:
+                connectionHandler.main.serverHandler.sendMessage(this, "Something went wrong! Server does not implements " + parsed.getFunction());
                 break;
         }
     }

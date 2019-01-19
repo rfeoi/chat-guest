@@ -59,7 +59,7 @@ public class ServerHandler {
      * Invite a client to your channel
      * Technically this adds the permission to join this channel and then sends the invitation prompt
      * @param client the inviter or (client owner)
-     * @param otherClient
+     * @param otherClient the recipient
      */
     public void inviteClient(Client client, String otherClient){
         Client client2 = getClientByUsername(otherClient);
@@ -70,8 +70,26 @@ public class ServerHandler {
     }
 
 
+    /**
+     * Send Message from Client
+     *
+     * @param client  the client who send it
+     * @param message the message which will be send
+     */
+    public void sendMessage(Client client, String message) {
+        for (Client recipient : getClientsInChannel(client.getChannel())) {
+            recipient.send(connectionHandler.parser.sendMessage(client, client.getChannel(), message));
+        }
+    }
+
+    /**
+     * Send an error message to a client
+     *
+     * @param client  the client which should receive the error
+     * @param message the message which should be send
+     */
     public void sendErrorMessage(Client client, String message) {
-        //TODO
+        client.send(connectionHandler.parser.sendError(message));
     }
 
     /**
@@ -185,5 +203,45 @@ public class ServerHandler {
         connectionHandler.clients.remove(client);
         connectionHandler.deleteThread(client);
         deletePrivateChannel(client);
+    }
+
+    /**
+     * Enters the group a user entered a key for
+     * If key is wrong it enters standard user group
+     *
+     * @param client which will enter
+     * @param hashed key
+     */
+    public void enterGroup(Client client, String hashed) {
+        client.setRole(main.permissionManagment.checkKey(hashed));
+    }
+
+    /**
+     * Send all clients to a client
+     *
+     * @param client which should get the information
+     */
+    public void sendClientsToClient(Client client) {
+        client.send(connectionHandler.parser.getClients(
+                client,
+                connectionHandler.clients.toArray(new nspirep2p.communication.protocol.Client[0]),
+                main.permissionManagment.clientHasPermission(client, Permission.READ_UUID)));
+    }
+
+    /**
+     * Sends all channels to client
+     *
+     * @param client who should get the channel list
+     */
+    public void sendChannelsToClient(Client client) {
+        ArrayList<String> channels = new ArrayList<>();
+        //TODO add public channels
+        for (Client channelOwner : privateChannels) {
+            channels.add(channelOwner.username);
+        }
+        client.send(connectionHandler.parser.getChannels(
+                client,
+                channels.toArray(new String[0])
+        ));
     }
 }

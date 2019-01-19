@@ -9,6 +9,7 @@ import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class PermissionManagment {
      * @throws UnsupportedEncodingException When happens error with utf 8 encoding
      */
     public boolean checkCleartextKey(String keyClearText, String role) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String hashed = new String(MessageDigest.getInstance("MD5").digest(keyClearText.getBytes("UTF-8")), "UTF-8");
+        String hashed = new String(MessageDigest.getInstance("MD5").digest(keyClearText.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         return checkKey(hashed, role);
     }
 
@@ -113,6 +114,22 @@ public class PermissionManagment {
 
 
     /**
+     * Checks the key
+     *
+     * @param key (hashed) key
+     * @return role, if wrong returns standard role (user)
+     */
+    public String checkKey(String key) {
+        for (String role : keys.values()) {
+            if (checkKey(key, role)) {
+                return role;
+            }
+        }
+        return "user";
+    }
+
+
+    /**
      * Creates a new role
      *
      * @param name        the name of the role
@@ -123,7 +140,7 @@ public class PermissionManagment {
      * @throws UnsupportedEncodingException if something with keying went wrong
      */
     public void createNewRole(String name, Permission[] permissions, String key) throws SqlJetException, NoSuchAlgorithmException, UnsupportedEncodingException {
-        String hashed = new String(MessageDigest.getInstance("MD5").digest(key.getBytes("UTF-8")), "UTF-8");
+        String hashed = new String(MessageDigest.getInstance("MD5").digest(key.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         ISqlJetTable table = database.getTable("roles");
         String json = gson.toJson(permissions, Permission[].class);
@@ -134,5 +151,6 @@ public class PermissionManagment {
         }
 
     }
+
 
 }
