@@ -25,8 +25,8 @@ public class ConnectionHandler {
     public ConnectionHandler(Main main, int port, int maxUser) throws IOException {
         this.main = main;
         serverSocket = new ServerSocket(port);
-        clients = new ArrayList<Client>(port);
-        connections = new ArrayList<Thread>(maxUser);
+        clients = new ArrayList<>(port);
+        connections = new ArrayList<>(maxUser);
         parser = new CommunicationParser(ClientType.SERVER);
         this.maxUser = maxUser;
 
@@ -44,10 +44,11 @@ public class ConnectionHandler {
     /**
      * Stops server
      */
-    public void stop() {
+    @SuppressWarnings("unused")
+    public void stop() throws IOException {
         //TODO tell user that server stopped
-        acceptThread.stop();
         serverRun = false;
+        serverSocket.close();
     }
 
     /**

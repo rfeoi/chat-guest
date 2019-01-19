@@ -6,7 +6,6 @@ import nspirep2p.application.server.database.PermissionManagment;
 import nspirep2p.application.server.database.ServerSetting;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -20,8 +19,8 @@ public class Installer {
     private HashMap<String, String> choosenOptions;
 
     public Installer() {
-        choosenOptions = new HashMap<String, String>();
-        setupOptions = new HashMap<String, String>();
+        choosenOptions = new HashMap<>();
+        setupOptions = new HashMap<>();
         setupOptions.put("databaseType:SQLITE", "What Type would you like to have your Database?");
         setupOptions.put("port:24466", "Which port do you want to use?");
         setupOptions.put("slots:10", "How many slots do you wish?");
@@ -51,7 +50,7 @@ public class Installer {
         Main.mainClass.permissionManagment = new PermissionManagment(Main.mainClass.databaseManager);
         try {
             createDefaultRole(choosenOptions.get("adminPW"));
-        } catch (SqlJetException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        } catch (SqlJetException | NoSuchAlgorithmException e) {
             System.err.println("An error happened during the creation of the roles");
             e.printStackTrace();
         }
@@ -73,7 +72,7 @@ public class Installer {
     /**
      * Creates default roles
      */
-    private void createDefaultRole(String adminPW) throws SqlJetException, NoSuchAlgorithmException, UnsupportedEncodingException {
+    private void createDefaultRole(String adminPW) throws SqlJetException, NoSuchAlgorithmException {
         Main.mainClass.permissionManagment.createNewRole("user", new Permission[]{Permission.READ_CHANNEL, Permission.CREATE_TEMP_CHANNEL}, "123");
         Main.mainClass.permissionManagment.createNewRole("admin", new Permission[]{Permission.READ_CHANNEL, Permission.CONTROL_OTHER, Permission.CREATE_TEMP_CHANNEL, Permission.KICK_USER, Permission.MANAGE_PUBLIC_CHANNEL, Permission.READ_UUID, Permission.JOIN_ANY}, adminPW);
     }

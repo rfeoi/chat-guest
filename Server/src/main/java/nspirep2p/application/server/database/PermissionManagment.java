@@ -8,7 +8,6 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,8 +27,8 @@ public class PermissionManagment {
      */
     public PermissionManagment(DatabaseManaging database){
         //Initialize variables
-        permissions = new HashMap<String, String[]>();
-        keys = new HashMap<String, String>();
+        permissions = new HashMap<>();
+        keys = new HashMap<>();
         this.database = database.database;
         //Get options from database
         try {
@@ -88,20 +87,6 @@ public class PermissionManagment {
     }
 
     /**
-     * Tests if a role has a specified key (Checks with clearKey)
-     *
-     * @param keyClearText the key in clear text
-     * @param role         the role of the user
-     * @return if the key is right
-     * @throws NoSuchAlgorithmException     Java error when generating md5
-     * @throws UnsupportedEncodingException When happens error with utf 8 encoding
-     */
-    public boolean checkCleartextKey(String keyClearText, String role) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        String hashed = new String(MessageDigest.getInstance("MD5").digest(keyClearText.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-        return checkKey(hashed, role);
-    }
-
-    /**
      * Check if a hashed text is equals to the key in the database
      *
      * @param key  the hashed key
@@ -137,9 +122,8 @@ public class PermissionManagment {
      * @param key         the key used to get the role
      * @throws SqlJetException              The exception for anything went wrong
      * @throws NoSuchAlgorithmException     If something with keying went wrong
-     * @throws UnsupportedEncodingException if something with keying went wrong
      */
-    public void createNewRole(String name, Permission[] permissions, String key) throws SqlJetException, NoSuchAlgorithmException, UnsupportedEncodingException {
+    public void createNewRole(String name, Permission[] permissions, String key) throws SqlJetException, NoSuchAlgorithmException {
         String hashed = new String(MessageDigest.getInstance("MD5").digest(key.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         ISqlJetTable table = database.getTable("roles");

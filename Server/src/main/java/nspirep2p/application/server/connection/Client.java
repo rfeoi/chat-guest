@@ -48,7 +48,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
         if (hasPermission(Permission.CONTROL_OTHER) && client != this){
             client = this;
         }else{
-            connectionHandler.main.serverHandler.sendMessage(this, Permission.CONTROL_OTHER.getNoPermissionError());
+            connectionHandler.main.serverHandler.sendErrorMessage(this, Permission.CONTROL_OTHER.getNoPermissionError());
         }
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
@@ -76,7 +76,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 connectionHandler.main.serverHandler.sendChannelsToClient(this);
                 break;
             default:
-                connectionHandler.main.serverHandler.sendMessage(this, "Something went wrong! Server does not implements " + parsed.getFunction());
+                connectionHandler.main.serverHandler.sendErrorMessage(this, "Something went wrong! Server does not implements " + parsed.getFunction());
                 break;
         }
     }

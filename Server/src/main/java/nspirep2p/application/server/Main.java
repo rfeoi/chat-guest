@@ -8,7 +8,6 @@ import nspirep2p.application.server.database.ServerSetting;
 import nspirep2p.application.server.install.Installer;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +20,7 @@ import java.io.InputStreamReader;
 public class Main {
     public DatabaseManaging databaseManager;
     public ServerHandler serverHandler;
-    public CommandParser commandParser;
+    private CommandParser commandParser;
     ConnectionHandler connectionHandler;
     public PermissionManagment permissionManagment;
     public static Main mainClass;
@@ -42,6 +41,7 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     private void commandParsing(){
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true){

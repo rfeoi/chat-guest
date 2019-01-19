@@ -80,6 +80,7 @@ public class DatabaseManaging {
      * @param value the value of the setting
      * @throws SqlJetException if something with database goes wrong
      */
+    @SuppressWarnings("unused") //TODO
     public void setSetting(ServerSetting arg, String value) throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         ISqlJetCursor updateCursor = database.getTable("settings").open();

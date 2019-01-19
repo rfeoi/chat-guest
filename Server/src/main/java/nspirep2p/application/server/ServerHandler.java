@@ -124,7 +124,7 @@ public class ServerHandler {
      * @param channel which you want to check
      * @return the clients as array
      */
-    public Client[] getClientsInChannel(String channel) {
+    private Client[] getClientsInChannel(String channel) {
         ArrayList<Client> clients = new ArrayList<>();
         for (Client client : connectionHandler.getClients()){
             if (client.getChannel().equals(channel)){
@@ -139,7 +139,7 @@ public class ServerHandler {
      * @param client the client which should be used
      * @param channel the channel where moved to
      */
-    public void forceMove(Client client, String channel){
+    private void forceMove(Client client, String channel) {
         connectionHandler.broadcast(connectionHandler.parser.moveClient(client, channel));
         client.setChannel(channel);
     }
@@ -149,7 +149,7 @@ public class ServerHandler {
      * @param client the client which should be checked
      * @return if the private channel exists
      */
-    public boolean hasPrivateChannel(Client client){
+    private boolean hasPrivateChannel(Client client) {
         return privateChannels.contains(client);
     }
 
@@ -158,7 +158,7 @@ public class ServerHandler {
      * @param name the client name which should be checked
      * @return if the private channel exists
      */
-    public boolean doesPrivateChannelExists(String name){
+    private boolean doesPrivateChannelExists(String name) {
         return hasPrivateChannel(getClientByUsername(name));
     }
 
