@@ -203,6 +203,7 @@ public class ServerHandler {
         connectionHandler.clients.remove(client);
         connectionHandler.deleteThread(client);
         deletePrivateChannel(client);
+        connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, "null"));
     }
 
     /**
