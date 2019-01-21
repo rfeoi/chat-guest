@@ -5,6 +5,9 @@ import nspirep2p.application.client.fileHandling.UserPropetySave;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
+import nspirep2p.communication.protocol.v1.Function;
+import nspirep2p.communication.protocol.v1.Package;
+import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,11 +19,10 @@ import java.net.Socket;
 public class ConnectionHandler extends Client {
 
     private int port = 24466;
-    private Socket socket = null;
     private PrintWriter writer;
-    CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
+    private CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
 
-       public ConnectionHandler() {}
+       public ConnectionHandler() { }
 
     /**
      * tries to connect to the server
@@ -57,7 +59,7 @@ public class ConnectionHandler extends Client {
 
     private boolean connectToServer(String ip, int port, String username) {
         try {
-            socket = new Socket(ip, port);
+            Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
             String[] handshake = parser.doHandshake(this);
             for (String s : handshake){
@@ -65,10 +67,6 @@ public class ConnectionHandler extends Client {
             }
             String[] usernameChange = parser.pushUsername(this, username);
             for (String s: usernameChange){
-                writer.println(s);
-            }
-            String[] createTemp = parser.createTempChannel(this);
-            for (String s: createTemp){
                 writer.println(s);
             }
             writer.flush();
@@ -80,4 +78,41 @@ public class ConnectionHandler extends Client {
         }
         return true;
     }
+
+    public void sendMessage(String[] message) {
+        for (String line:message) {
+            writer.println(line);
+        }
+        writer.flush();
+    }
+
+
+    public void changeUsername(String newUsername) {
+        String[] usernameChange = parser.pushUsername(this, newUsername);
+        sendMessage(usernameChange);
+    }
+
+    void parsePackage(String[] lines) throws WrongPackageFormatException {
+        Package parsed = parser.parsePackage(lines);
+        switch (parsed.getFunction()) {
+            case CHANGE_USERNAME:
+                Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
+                break;
+            case MOVE:
+                //A client has been moved. (Where?)
+                break;
+            case INVITE:
+                //You have been invited. (To what?)
+                break;
+            case CREATE_TEMP_CHANNEL:
+                Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
+                break;
+            case DELETE_TEMP_CHANNEL:
+                Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
+                break;
+        }
+        Main.mainClass.mainInterface.reload();
+    }
+
+
 }

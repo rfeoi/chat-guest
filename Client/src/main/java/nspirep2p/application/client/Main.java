@@ -1,15 +1,17 @@
 package nspirep2p.application.client;
 
-/**
- * Main client class.
- * Starts client
- * Created by strifel on 05.11.2018.
+/*
+  Main client class.
+  Starts client
+  Created by strifel on 05.11.2018.
  */
 
 import nspirep2p.application.client.connection.ConnectionHandler;
 import nspirep2p.application.client.fileHandling.UserPropetySave;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * TODO:
@@ -19,9 +21,12 @@ import java.io.IOException;
  */
 public class Main {
     private UserInterface userInterface;
-    ConnectionHandler connectionHandler;
+    public MainInterface mainInterface;
+    public ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;
+    public MainInterfaceData mainInterfaceData;
     public static Main mainClass;
+    private String username, ip;
 
     public static void main(String[] args){
         mainClass = new Main();
@@ -32,6 +37,8 @@ public class Main {
         userInterface = new UserInterface();
         connectionHandler = new ConnectionHandler();
         userPropetySave = new UserPropetySave();
+        mainInterface = new MainInterface();
+        mainInterfaceData = new MainInterfaceData();
     }
 
     private void start() {
@@ -43,8 +50,23 @@ public class Main {
                 e.printStackTrace();
             }
             userInterface.startWithText(properties[1], properties[0]);
+            username = properties[1];
+            ip = properties[0];
         } else {
             userInterface.start();
         }
     }
+
+
+    public String getTime() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(cal.getTime());
+    }
+
+    String getUsername() {
+        return username;
+    }
+
+    String getIP() { return ip; }
 }

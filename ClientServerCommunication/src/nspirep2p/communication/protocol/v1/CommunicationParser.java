@@ -44,11 +44,11 @@ public class CommunicationParser {
     }
 
     /**
-     * Handels parsing of handshake on server side
+     * Handles parsing of handshake on server side
      * First line of response is either deny or accept
      * This can be used to do Server stuff if denied
      *
-     * @param handshake the handshake recieved from client
+     * @param handshake the handshake received from client
      * @param newClient the client you want to have the information in
      * @return protocol to send to client
      */
