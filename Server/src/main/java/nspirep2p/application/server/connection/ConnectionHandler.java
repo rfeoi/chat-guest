@@ -16,7 +16,7 @@ public class ConnectionHandler {
     private ServerSocket serverSocket;
     Main main;
     ArrayList<Thread> connections;
-    ArrayList<Client> clients;
+    public ArrayList<Client> clients;
     public CommunicationParser parser;
     int maxUser;
     private Thread acceptThread;
@@ -25,8 +25,8 @@ public class ConnectionHandler {
     public ConnectionHandler(Main main, int port, int maxUser) throws IOException {
         this.main = main;
         serverSocket = new ServerSocket(port);
-        clients = new ArrayList<Client>(port);
-        connections = new ArrayList<Thread>(maxUser);
+        clients = new ArrayList<>(port);
+        connections = new ArrayList<>(maxUser);
         parser = new CommunicationParser(ClientType.SERVER);
         this.maxUser = maxUser;
 
@@ -44,10 +44,20 @@ public class ConnectionHandler {
     /**
      * Stops server
      */
-    public void stop() {
+    @SuppressWarnings("unused")
+    public void stop() throws IOException {
         //TODO tell user that server stopped
-        acceptThread.stop();
         serverRun = false;
+        serverSocket.close();
+    }
+
+    /**
+     * Delete and stop a thread
+     *
+     * @param client which should be stopped
+     */
+    public void deleteThread(Client client) {
+        client.removeThread();
     }
 
 
@@ -58,12 +68,7 @@ public class ConnectionHandler {
      */
     public void broadcast(String[] lines) {
         for (Client client : clients) {
-            try {
                 client.send(lines);
-            } catch (IOException e) {
-                System.err.println("Could not reach client " + client.username + " with UUID " + client.uuid + " on " + client.userSocket.getInetAddress().getHostAddress());
-                e.printStackTrace();
-            }
         }
     }
 

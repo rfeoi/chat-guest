@@ -27,7 +27,11 @@ public class DatabaseManaging {
      */
     //TODO
     public boolean isInstalled() {
-        return false;
+        try {
+            return this.getSetting(ServerSetting.SERVER_PORT) != null;
+        } catch (SqlJetException e) {
+            return false;
+        }
     }
 
 
@@ -39,7 +43,7 @@ public class DatabaseManaging {
      * @throws SqlJetException if sql has an error
      */
     public void createTables() throws SqlJetException {
-        database.getOptions().setAutovacuum(true);
+        //  database.getOptions().setAutovacuum(true);
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         try {
             database.getOptions().setUserVersion(1);
@@ -47,10 +51,13 @@ public class DatabaseManaging {
             database.commit();
         }
         String settingsTable = "CREATE TABLE settings (setting TEXT NOT NULL PRIMARY KEY , value TEXT)";
-        String rolesTable = "CREATE TABLE roles (name TEXT NOT NULL PRIMARY KEY, key TEXT, permissions TEXT)";
+        //String settingsIndex = "CREATE INDEX value ON settings(value)";
+        String settingsIndex2 = "CREATE INDEX setting ON settings(setting)";
+        String rolesTable = "CREATE TABLE roles (name TEXT NOT NULL PRIMARY KEY, permissions TEXT, key TEXT)";
         try {
             database.createTable(settingsTable);
             database.createTable(rolesTable);
+            database.createIndex(settingsIndex2);
         } finally {
             database.commit();
         }
@@ -73,6 +80,7 @@ public class DatabaseManaging {
      * @param value the value of the setting
      * @throws SqlJetException if something with database goes wrong
      */
+    @SuppressWarnings("unused") //TODO
     public void setSetting(ServerSetting arg, String value) throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         ISqlJetCursor updateCursor = database.getTable("settings").open();
@@ -97,7 +105,7 @@ public class DatabaseManaging {
      */
     public void insertSetting(ServerSetting arg, String value) throws SqlJetException {
         try {
-            database.getTable("settings").insert(arg, value);
+            database.getTable("settings").insert(arg.toString(), value);
         } finally {
             database.commit();
         }

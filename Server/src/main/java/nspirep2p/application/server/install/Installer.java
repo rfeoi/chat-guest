@@ -1,9 +1,12 @@
 package nspirep2p.application.server.install;
 
 import nspirep2p.application.server.Main;
+import nspirep2p.application.server.database.Permission;
+import nspirep2p.application.server.database.PermissionManagment;
 import nspirep2p.application.server.database.ServerSetting;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -16,12 +19,13 @@ public class Installer {
     private HashMap<String, String> choosenOptions;
 
     public Installer() {
-        choosenOptions = new HashMap<String, String>();
-        setupOptions = new HashMap<String, String>();
+        choosenOptions = new HashMap<>();
+        setupOptions = new HashMap<>();
         setupOptions.put("databaseType:SQLITE", "What Type would you like to have your Database?");
         setupOptions.put("port:24466", "Which port do you want to use?");
         setupOptions.put("slots:10", "How many slots do you wish?");
         setupOptions.put("generateChannel:0", "How many default channel would you like to generate?");
+        setupOptions.put("adminPW:admin", "Which key do you want to have as an Admin Key (PLEASE DO NOT USE STANDARD KEY!)?");
     }
 
     /**
@@ -36,21 +40,26 @@ public class Installer {
             String question = setupOptions.get(atribute);
             System.out.println(question + "[" + atribute.split(":")[1] + "]");
             String option = scanner.nextLine();
-            if (option != null) {
-                choosenOptions.put(atribute.split("=")[0], option);
+            if (!option.equals("")) {
+                choosenOptions.put(atribute.split(":")[0], option);
             } else {
-                choosenOptions.put(atribute.split("=")[0], atribute.split("=")[1]);
+                choosenOptions.put(atribute.split(":")[0], atribute.split(":")[1]);
             }
         }
-
+        createDatabase();
+        Main.mainClass.permissionManagment = new PermissionManagment(Main.mainClass.databaseManager);
+        try {
+            createDefaultRole(choosenOptions.get("adminPW"));
+        } catch (SqlJetException | NoSuchAlgorithmException e) {
+            System.err.println("An error happened during the creation of the roles");
+            e.printStackTrace();
+        }
     }
 
     /**
      * Creates the database
-     *
-     * @param choosenOptions by user
      */
-    public void createDatabase(HashMap<String, String> choosenOptions) {
+    private void createDatabase() {
         try {
             Main.mainClass.databaseManager.createTables();
             Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_PORT, choosenOptions.get("port"));
@@ -59,4 +68,13 @@ public class Installer {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Creates default roles
+     */
+    private void createDefaultRole(String adminPW) throws SqlJetException, NoSuchAlgorithmException {
+        Main.mainClass.permissionManagment.createNewRole("user", new Permission[]{Permission.READ_CHANNEL, Permission.CREATE_TEMP_CHANNEL}, "123");
+        Main.mainClass.permissionManagment.createNewRole("admin", new Permission[]{Permission.READ_CHANNEL, Permission.CONTROL_OTHER, Permission.CREATE_TEMP_CHANNEL, Permission.KICK_USER, Permission.MANAGE_PUBLIC_CHANNEL, Permission.READ_UUID, Permission.JOIN_ANY}, adminPW);
+    }
+
 }
