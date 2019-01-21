@@ -41,13 +41,15 @@ public class ChannelManagment {
      */
     private void reLoadDatabase() throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.READ_ONLY);
-        ISqlJetTable table = database.getTable("roles");
+        ISqlJetTable table = database.getTable("channel");
         ISqlJetCursor cursor = table.order(table.getPrimaryKeyIndexName());
         try {
             if (!cursor.eof()) {
                 LinkedHashMap<Integer, String> unsortedChannel = new LinkedHashMap<>();
                 do {
-                    unsortedChannel.put((Integer) cursor.getValue("level"), cursor.getString("name"));
+                    //System.out.println(new Integer((int) cursor.getInteger("level")));
+                    int value = (int) cursor.getInteger("level");
+                    unsortedChannel.put(value, cursor.getString("name"));
                 } while (cursor.next());
                 Object[] sorted = unsortedChannel.entrySet().stream()
                         .sorted(Map.Entry.comparingByKey()).toArray();
