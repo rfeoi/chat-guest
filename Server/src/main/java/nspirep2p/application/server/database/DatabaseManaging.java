@@ -54,9 +54,11 @@ public class DatabaseManaging {
         //String settingsIndex = "CREATE INDEX value ON settings(value)";
         String settingsIndex2 = "CREATE INDEX setting ON settings(setting)";
         String rolesTable = "CREATE TABLE roles (name TEXT NOT NULL PRIMARY KEY, permissions TEXT, key TEXT)";
+        String channelTable = "CREATE TABLE channel (name TEXT NOT NULL PRIMARY KEY, level INTEGER)";
         try {
             database.createTable(settingsTable);
             database.createTable(rolesTable);
+            database.createTable(channelTable);
             database.createIndex(settingsIndex2);
         } finally {
             database.commit();

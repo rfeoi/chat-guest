@@ -7,6 +7,7 @@ import nspirep2p.application.server.database.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ServerHandler {
 
@@ -29,7 +30,8 @@ public class ServerHandler {
      * @param newUsername the new username
      */
     public void pushUsernameToClients(Client client, String newUsername) {
-        if (getClientByUsername(newUsername) == null) {
+        if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
+            client.username = newUsername;
             connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
         }
     }
@@ -173,8 +175,9 @@ public class ServerHandler {
             deletePrivateChannel(client);
         }
         //Move client
-        //TODO: public channels
         if (doesPrivateChannelExists(channel) && (allowedClients.get(getClientByUsername(channel)).contains(client) || client.hasPermission(Permission.JOIN_ANY))) {
+            forceMove(client, channel);
+        } else if (Arrays.asList(main.channelManagment.getChannel()).contains(channel) && client.hasPermission(Permission.READ_CHANNEL)) {
             forceMove(client, channel);
         }
     }
@@ -235,8 +238,7 @@ public class ServerHandler {
      * @param client who should get the channel list
      */
     public void sendChannelsToClient(Client client) {
-        ArrayList<String> channels = new ArrayList<>();
-        //TODO add public channels
+        LinkedList<String> channels = new LinkedList<>(Arrays.asList(main.channelManagment.getChannel()));
         for (Client channelOwner : privateChannels) {
             channels.add(channelOwner.username);
         }

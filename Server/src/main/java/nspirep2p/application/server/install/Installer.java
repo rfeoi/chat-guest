@@ -1,6 +1,7 @@
 package nspirep2p.application.server.install;
 
 import nspirep2p.application.server.Main;
+import nspirep2p.application.server.database.ChannelManagment;
 import nspirep2p.application.server.database.Permission;
 import nspirep2p.application.server.database.PermissionManagment;
 import nspirep2p.application.server.database.ServerSetting;
@@ -24,7 +25,7 @@ public class Installer {
         setupOptions.put("databaseType:SQLITE", "What Type would you like to have your Database?");
         setupOptions.put("port:24466", "Which port do you want to use?");
         setupOptions.put("slots:10", "How many slots do you wish?");
-        setupOptions.put("generateChannel:0", "How many default channel would you like to generate?");
+        setupOptions.put("generateChannel:1", "How many default channel would you like to generate?");
         setupOptions.put("adminPW:admin", "Which key do you want to have as an Admin Key (PLEASE DO NOT USE STANDARD KEY!)?");
     }
 
@@ -48,11 +49,21 @@ public class Installer {
         }
         createDatabase();
         Main.mainClass.permissionManagment = new PermissionManagment(Main.mainClass.databaseManager);
+        Main.mainClass.channelManagment = new ChannelManagment(Main.mainClass.databaseManager);
         try {
             createDefaultRole(choosenOptions.get("adminPW"));
+            createDefaultChannel(Integer.parseInt(choosenOptions.get("generateChannel")));
         } catch (SqlJetException | NoSuchAlgorithmException e) {
             System.err.println("An error happened during the creation of the roles");
             e.printStackTrace();
+        }
+    }
+
+    private void createDefaultChannel(int count) throws SqlJetException {
+        if (count > 0) {
+            for (int i = 0; i < count; i++) {
+                Main.mainClass.channelManagment.createNewChannel("Channel " + i, count - i);
+            }
         }
     }
 
