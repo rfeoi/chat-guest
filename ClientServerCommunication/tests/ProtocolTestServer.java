@@ -1,6 +1,4 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 import nspirep2p.communication.protocol.*;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
@@ -11,6 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.channels.Channel;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 /**
@@ -90,8 +92,8 @@ public class ProtocolTestServer {
         assertNull(cPackage.getArg(Function.MOVE.getParameters()[0]));
         assertNotNull(cPackage.getArg(Function.MOVE.getParameters()[1]));
         assertEquals(cPackage.getArg(Function.MOVE.getParameters()[1]), "test");
-    }
 
+    }
     @Test
     public void parseInvite() throws WrongPackageFormatException {
         CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
@@ -106,6 +108,7 @@ public class ProtocolTestServer {
         assertEquals(cPackage.getFunction(), Function.INVITE);
         assertNotNull(cPackage.getArg(Function.INVITE.getParameters()[0]));
         assertEquals(cPackage.getArg(Function.INVITE.getParameters()[0]), client1.username);
+
     }
     @Test
     public void sendMessage() throws WrongPackageFormatException {
@@ -120,7 +123,52 @@ public class ProtocolTestServer {
         assertEquals(cPackage.getArg(Function.SEND_MESSAGE.getParameters()[0]), "1234567890");
         assertEquals(cPackage.getArg(Function.SEND_MESSAGE.getParameters()[1]), "Hallo");
 
+    }
+    @Test
+    public void sendError() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        String[] sendError = parser.sendError("NullPointer");
+        Package cPackage = cparser.parsePackage(sendError);
+        assertEquals(cPackage.getFunction(),Function.SEND_ERROR);
+        assertEquals(cPackage.getArg(Function.SEND_ERROR.getParameters()[0]),"NullPointer");
 
+    }
+    @Test
+    public void getClients() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        Client[] clients = new Client[10];
+        String usernames = "";
+        String uuid = "";
+        for(int i = 0;i<=9;i++){
+            clients[i] = new Client();
+            clients[i].username = i+"";
+            clients[i].uuid = i+"";
+            usernames += clients[i].username+",";
+            uuid += clients[i].uuid+",";
+        }
+        usernames = usernames.substring(0, usernames.length() -1);
+        uuid = uuid.substring(0, uuid.length() -1);
+        String[] getClients = parser.getClients(client,clients,true);
+        Package cPackage = cparser.parsePackage(getClients);
+        assertEquals(cPackage.getFunction(),Function.GET_CLIENTS);
+        assertEquals(cPackage.getArg(Function.GET_CLIENTS.getParameters()[0]),"0,1,2,3,4,5,6,7,8,9");
+        assertEquals(cPackage.getArg(Function.GET_CLIENTS.getParameters()[1]),"0,1,2,3,4,5,6,7,8,9");
+
+    }
+    @Test
+    public void getChannels() throws WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        String[] strings = {"1","2","3","4","5"};
+        String[] getChannels = parser.getChannels(client,strings);
+        Package cPackage = cparser.parsePackage(getChannels);
+        assertEquals(cPackage.getFunction(),Function.GET_CHANNELS);
+        assertEquals(cPackage.getArg(Function.GET_CHANNELS.getParameters()[0]),"1,2,3,4,5");
 
     }
 

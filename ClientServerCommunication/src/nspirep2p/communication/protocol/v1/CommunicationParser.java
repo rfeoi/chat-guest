@@ -283,17 +283,17 @@ public class CommunicationParser {
      * Returns list with all clients to client
      *
      * @param client   the client which requested
-     * @param chlients all clients (null on client)
+     * @param clients all clients (null on client)
      * @param sendUUID if uuids should be send too (false on client)
      * @return push
      */
-    public String[] getClients(Client client, Client[] chlients, boolean sendUUID) {
+    public String[] getClients(Client client, Client[] clients, boolean sendUUID) {
         if(clientType == ClientType.SERVER){
             String[] push = new String[4];
-            push[0] = "function=GET_CHANNELS";
+            push[0] = "function=GET_CLIENTS";
             push[1] = Function.GET_CLIENTS.getParameters()[0] + "=";
             push[2] = Function.GET_CLIENTS.getParameters()[1] + "=";
-            for (Client s:chlients) {
+            for (Client s:clients) {
                 push[1] += s.username+",";
                 if (sendUUID){
                     push[2] += s.uuid + ",";
@@ -332,7 +332,6 @@ public class CommunicationParser {
         }
         return new String[]{};
     }
-
     /**
      * Enter a group with a password
      *
@@ -389,10 +388,12 @@ public class CommunicationParser {
         if (!clientIncoming[1].startsWith("auth.uuid="))
             throw new WrongPackageFormatException(clientIncoming[1], "No Auth UUID found!");
         clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
-        for (int i = 2; i < clientIncoming.length - 1; i++) {
-            if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
-                throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
-            clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+        if(clientIncoming.length>2) {
+            for (int i = 2; i < clientIncoming.length - 1; i++) {
+                if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
+                    throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
+                clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+            }
         }
         if (clientIncoming[clientIncoming.length - 1] == END_WAIT) {
             clientPackage.setWaitForAnswer(true);
@@ -413,10 +414,12 @@ public class CommunicationParser {
         if (clientPackage == null)
             throw new WrongPackageFormatException(clientIncoming[0], "Function requested not found!");
         clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
-        for (int i = 1; i < clientIncoming.length - 1; i++) {
-            if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
-                throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
-            clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+        if(clientIncoming.length > 2) {
+            for (int i = 1; i < clientIncoming.length - 1; i++) {
+                if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
+                    throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
+                clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+            }
         }
         if (clientIncoming[clientIncoming.length - 1] == END_WAIT) {
             clientPackage.setWaitForAnswer(true);
