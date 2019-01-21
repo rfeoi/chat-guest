@@ -17,11 +17,13 @@ public class MultipleLinesReader {
     }
 
     public boolean isEnd(){
+        if (arrayList == null) return false;
         String last = arrayList.get(arrayList.size() - 1);
+        if(last == null) return false;
         return last.equals(CommunicationParser.END_WAIT) || last.equals(CommunicationParser.END_BREAK);
     }
 
     public String[] getLines(){
-        return (String[]) arrayList.toArray();
+        return arrayList.toArray(new String[0]);
     }
 }

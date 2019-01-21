@@ -10,6 +10,10 @@ import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * A Test class
  * Created by robmroi03 on 26.11.2018.
@@ -96,6 +100,19 @@ public class ProtocolTestClient {
         assertEquals("test",responsePackage.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
 
     }
+    @Test
+    public void enterGroup() throws NoSuchAlgorithmException, WrongPackageFormatException {
+        CommunicationParser cparser = new CommunicationParser(ClientType.CLIENT);
+        CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
+        Client client = new Client();
+        client.uuid = "1234";
+        String cleartextPassword = "abcd";
+        String hashed = new String(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        String[] enterGroup = cparser.enterGroup(client,cleartextPassword);
+        Package responsePackage = parser.parsePackage(enterGroup);
+        assertEquals(responsePackage.getFunction(), Function.ENTER_GROUP);
+        assertEquals(responsePackage.getAuthUUID(),"1234");
+        assertEquals(responsePackage.getArg(Function.ENTER_GROUP.getParameters()[0]),hashed);
 
-
+    }
 }
