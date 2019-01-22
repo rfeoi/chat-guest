@@ -5,17 +5,19 @@ import java.util.List;
 
 public class MainInterfaceData {
     private List<String> users, channel;
+    private String currentChannel;
 
     MainInterfaceData() {
         users = new ArrayList<>();
         channel = new ArrayList<>();
+        currentChannel = "";
     }
 
     public void addUser(String username) {
         users.add(username);
     }
 
-    void removeUser(String username) {
+   public void removeUser(String username) {
         users.remove(username);
     }
 
@@ -62,5 +64,11 @@ public class MainInterfaceData {
     String[] getChannel() {
         return channel.toArray(new String[0]);
     }
+
+    public void setCurrentChannel(String channelName) {
+        currentChannel = channelName;
+    }
+
+    public String getCurrentChannel() { return currentChannel; }
 
 }

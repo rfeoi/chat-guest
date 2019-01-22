@@ -9,6 +9,7 @@ import nspirep2p.communication.protocol.v1.Function;
 import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -79,7 +80,7 @@ public class ConnectionHandler extends Client {
         return true;
     }
 
-    void sendMessage(String[] message) {
+    private void sendMessage(String[] message) {
         for (String line:message) {
             writer.println(line);
         }
@@ -106,18 +107,36 @@ public class ConnectionHandler extends Client {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
-                //old == null -> neuer client
-                // new == null -> client nicht mehr da
-                Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
+                String oldUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]);
+                String newUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]);
+                if (oldUsername == null) {
+                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + newUsername + "</br> joined");
+                    Main.mainClass.mainInterfaceData.addUser(newUsername);
+                } else if (newUsername == null) {
+                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + oldUsername + "</br> left");
+                    Main.mainClass.mainInterfaceData.removeUser(oldUsername);
+                } else {
+                    Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
+                }
                 break;
             case MOVE:
-                //A client was moved to another Channel. if was in your channel (check this): Say: <br>UserName</br> left
-                //if joins your channel: Say <br> Username </br> joined
-                //else dont say anything
+                String username = parsed.getArg(Function.MOVE.getParameters()[0]);
+                String changeChannel = parsed.getArg(Function.MOVE.getParameters()[1]);
+                if (changeChannel.equals("another Channel")/* && username.wasInYourChannel*/) {
+                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + username + "</br> left");
+                    Main.mainClass.mainInterfaceData.removeUser(username);
+                } else if (changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel())) {
+                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + username + "</br> joined");
+                    Main.mainClass.mainInterfaceData.addUser(username);
+                }
                 break;
             case INVITE:
-                //You have been invited.
-                //popup -> you have been invited by UserName to join his/her channel ->Join, Not Join
+                int joinInt = JOptionPane.showConfirmDialog(null, "You have been invited by " +
+                        parsed.getArg(Function.INVITE.getParameters()[0]) + " to join their channel. \n" +
+                        "Do you want to join?", "You have been invited", JOptionPane.YES_NO_OPTION);
+                if (joinInt == JOptionPane.YES_OPTION) {
+                    move(parsed.getArg(Function.INVITE.getParameters()[0]));
+                }
                 break;
             case CREATE_TEMP_CHANNEL: //DONE
                 Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
@@ -127,7 +146,7 @@ public class ConnectionHandler extends Client {
                 Main.mainClass.mainInterfaceData.removeChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
                 break;
             case SEND_ERROR:
-                //JOptionPane with Error
+                JOptionPane.showMessageDialog(null, parsed.getArg(Function.SEND_ERROR.getParameters()[0]));
                 break;
             case GET_CLIENTS: //DONE
                 String[] userList = parsed.getArg(Function.GET_CLIENTS.getParameters()[0]).split(",");

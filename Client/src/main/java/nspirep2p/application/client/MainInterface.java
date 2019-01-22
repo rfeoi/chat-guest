@@ -90,11 +90,11 @@ public class MainInterface extends JFrame implements AWTEventListener {
 
     private void setButtonPane() {
         JPanel buttonPanel = new JPanel();
-        changeUsernameButton = new JButton("Nutzernamen aendern");
+        changeUsernameButton = new JButton("Change username");
         changeUsernameButton.addActionListener(actionListener);
         buttonPanel.add(changeUsernameButton);
 
-        sendMessage = new JButton("Nachricht");
+        sendMessage = new JButton("message");
         sendMessage.addActionListener(actionListener);
         buttonPanel.add(sendMessage);
 
@@ -116,6 +116,12 @@ public class MainInterface extends JFrame implements AWTEventListener {
         messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
     }
 
+    public void setNewServerMessage(String message) {
+        String text = messages.getText();
+        text = text.replace("</html>", "");
+        messages.setText(text + message + "</html>");
+    }
+
 
     private void sendMessage() {
         String message = userInput.getText();
@@ -127,10 +133,11 @@ public class MainInterface extends JFrame implements AWTEventListener {
 
     private void changeUsername() {
         String username = "";
-        while (username.isEmpty() || username.contains(" ")) {
-            username = JOptionPane.showInputDialog("Geben Sie hier ihren neuen Benutzernamen ein.", Main.mainClass.getUsername());
-            System.out.println(username);
-        }
+        try {
+            while (username.isEmpty() || username.contains(" ")) {
+                username = JOptionPane.showInputDialog("Enter your new username.", Main.mainClass.getUsername());
+            }
+        } catch (NullPointerException e) { return; }
         try {
             Main.mainClass.userPropetySave.generateConfigFile(Main.mainClass.getIP(), username);
         } catch (IOException e) {
@@ -170,6 +177,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         Main.mainClass.connectionHandler.move(channelName);
+                        Main.mainClass.mainInterfaceData.setCurrentChannel(channelName);
                     }
 
                     @Override
