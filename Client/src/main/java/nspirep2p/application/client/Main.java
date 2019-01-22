@@ -8,6 +8,8 @@ package nspirep2p.application.client;
 
 import nspirep2p.application.client.connection.ConnectionHandler;
 import nspirep2p.application.client.fileHandling.UserPropetySave;
+import nspirep2p.communication.protocol.ClientType;
+import nspirep2p.communication.protocol.v1.CommunicationParser;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -25,6 +27,8 @@ public class Main {
     public ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;
     public MainInterfaceData mainInterfaceData;
+    public CommunicationParser communicationParser;
+
     public static Main mainClass;
     private String username, ip;
 
@@ -39,6 +43,7 @@ public class Main {
         userPropetySave = new UserPropetySave();
         mainInterface = new MainInterface();
         mainInterfaceData = new MainInterfaceData();
+        communicationParser = new CommunicationParser(ClientType.CLIENT);
     }
 
     private void start() {

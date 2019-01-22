@@ -61,15 +61,15 @@ public class ConnectionHandler extends Client {
         try {
             Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-            String[] handshake = parser.doHandshake(this);
-            for (String s : handshake){
-                writer.println(s);
-            }
-            String[] usernameChange = parser.pushUsername(this, username);
-            for (String s: usernameChange){
-                writer.println(s);
-            }
-            writer.flush();
+            sendMessage(parser.doHandshake(this));
+
+            sendMessage(parser.pushUsername(this, username));
+            this.username = username;
+
+            sendMessage(parser.getChannels(this, null));
+
+            sendMessage(parser.getClients(this, null, false));
+
             Thread thread = new Thread(new ServerParser(socket));
             thread.start();
         } catch (IOException e) {
@@ -79,11 +79,15 @@ public class ConnectionHandler extends Client {
         return true;
     }
 
-    public void sendMessage(String[] message) {
+    void sendMessage(String[] message) {
         for (String line:message) {
             writer.println(line);
         }
         writer.flush();
+    }
+
+    public void createAMessage(String message) {
+        sendMessage(Main.mainClass.communicationParser.sendMessage(this, "A channel", message));
     }
 
 
@@ -92,24 +96,58 @@ public class ConnectionHandler extends Client {
         sendMessage(usernameChange);
     }
 
-    void parsePackage(String[] lines) throws WrongPackageFormatException {
+    public void move(String to) {
+        String[] move = parser.moveClient(this, to);
+        sendMessage(move);
+    }
+
+
+    public void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
+                //old == null -> neuer client
+                // new == null -> client nicht mehr da
                 Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
                 break;
             case MOVE:
-                //A client has been moved. (Where?)
+                //A client was moved to another Channel. if was in your channel (check this): Say: <br>UserName</br> left
+                //if joins your channel: Say <br> Username </br> joined
+                //else dont say anything
                 break;
             case INVITE:
-                //You have been invited. (To what?)
+                //You have been invited.
+                //popup -> you have been invited by UserName to join his/her channel ->Join, Not Join
                 break;
-            case CREATE_TEMP_CHANNEL:
+            case CREATE_TEMP_CHANNEL: //DONE
                 Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
+                Main.mainClass.mainInterface.reload();
                 break;
-            case DELETE_TEMP_CHANNEL:
-                Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
+            case DELETE_TEMP_CHANNEL: //DONE
+                Main.mainClass.mainInterfaceData.removeChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
                 break;
+            case SEND_ERROR:
+                //JOptionPane with Error
+                break;
+            case GET_CLIENTS: //DONE
+                String[] userList = parsed.getArg(Function.GET_CLIENTS.getParameters()[0]).split(",");
+                for (String user : userList) {
+                    Main.mainClass.mainInterfaceData.addUser(user);
+                }
+                break;
+            case GET_CHANNELS:
+                String[] channelList = parsed.getArg(Function.GET_CHANNELS.getParameters()[0]).split(",");
+                for (String channel : channelList) {
+                    Main.mainClass.mainInterfaceData.addChannel(channel);
+                }
+                break;
+            case SEND_MESSAGE: //DONE (without channel)
+                Main.mainClass.mainInterface.setNewMessage(parsed.getArg(Function.SEND_MESSAGE.getParameters()[2]),Main.mainClass.getTime(),parsed.getArg(Function.SEND_MESSAGE.getParameters()[1]));
+                break;
+            default:
+                for (String line : lines) {
+                    System.out.println(line);
+                }
         }
         Main.mainClass.mainInterface.reload();
     }

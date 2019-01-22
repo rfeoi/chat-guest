@@ -26,6 +26,7 @@ public class ServerParser implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        multipleLinesReader = new MultipleLinesReader();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class ServerParser implements Runnable{
                     break;
                 }
                 //Hier einfügen
-                multipleLinesReader.read(reader.readLine());
+                multipleLinesReader.read(message);
                 if (multipleLinesReader.isEnd()) {
                     try {
                         //parse Package

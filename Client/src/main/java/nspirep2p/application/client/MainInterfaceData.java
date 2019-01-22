@@ -6,12 +6,12 @@ import java.util.List;
 public class MainInterfaceData {
     private List<String> users, channel;
 
-    public MainInterfaceData() {
+    MainInterfaceData() {
         users = new ArrayList<>();
         channel = new ArrayList<>();
     }
 
-    void addUser(String username) {
+    public void addUser(String username) {
         users.add(username);
     }
 
@@ -59,12 +59,8 @@ public class MainInterfaceData {
         }
     }
 
-    String getChannel() {
-        String returnString = "";
-        for (String aChannel: channel) {
-            returnString += aChannel + "\n";
-        }
-        return returnString;
+    String[] getChannel() {
+        return channel.toArray(new String[0]);
     }
 
 }
