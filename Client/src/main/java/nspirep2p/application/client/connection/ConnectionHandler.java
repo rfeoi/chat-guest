@@ -23,7 +23,7 @@ public class ConnectionHandler extends Client {
     private PrintWriter writer;
     private CommunicationParser parser = new CommunicationParser(ClientType.CLIENT);
 
-       public ConnectionHandler() { }
+    public ConnectionHandler() { }
 
     /**
      * tries to connect to the server
@@ -88,22 +88,31 @@ public class ConnectionHandler extends Client {
     }
 
     public void createAMessage(String message) {
-        sendMessage(Main.mainClass.communicationParser.sendMessage(this, "A channel", message));
+        sendMessage(Main.mainClass.communicationParser.sendMessage(this, null, message));
     }
 
-
     public void changeUsername(String newUsername) {
-        String[] usernameChange = parser.pushUsername(this, newUsername);
-        sendMessage(usernameChange);
+        sendMessage(parser.pushUsername(this, newUsername));
     }
 
     public void move(String to) {
-        String[] move = parser.moveClient(this, to);
-        sendMessage(move);
+        sendMessage(parser.moveClient(this, to));
     }
 
+    public void invite(String user, boolean createTempChannel) {
+        if (createTempChannel) {
+            sendMessage(parser.createTempChannel(this));
+        }
+        Client client = new Client();
+        client.username = user;
+        sendMessage(parser.inviteClient(this, client));
+    }
 
-    public void parsePackage(String[] lines) throws WrongPackageFormatException {
+    public void setGroup(String key) {
+        sendMessage(parser.enterGroup(this, key));
+    }
+
+    void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:

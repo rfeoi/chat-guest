@@ -6,11 +6,13 @@ import java.util.List;
 public class MainInterfaceData {
     private List<String> users, channel;
     private String currentChannel;
+    private boolean hasCreatedTempChannel;
 
     MainInterfaceData() {
         users = new ArrayList<>();
         channel = new ArrayList<>();
         currentChannel = "";
+        hasCreatedTempChannel = false;
     }
 
     public void addUser(String username) {
@@ -33,12 +35,8 @@ public class MainInterfaceData {
         }
     }
 
-    String getUsers() {
-        String returnString = "";
-        for (String user: users) {
-            returnString += user + "\n";
-        }
-        return returnString;
+    String[] getUsers() {
+        return users.toArray(new String[0]);
     }
 
     public void addChannel(String channelName) {
@@ -49,26 +47,20 @@ public class MainInterfaceData {
         channel.remove(channelName);
     }
 
-    public void changeChannelName(String oldChannelName, String newChannelName) {
-        int i = 0;
-        for (String aChannel: channel) {
-            if (aChannel.equals(oldChannelName)) {
-                channel.remove(i);
-                channel.add(i, newChannelName);
-                break;
-            }
-            i = i + 1;
-        }
-    }
-
     String[] getChannel() {
         return channel.toArray(new String[0]);
     }
 
-    public void setCurrentChannel(String channelName) {
+    void setCurrentChannel(String channelName) {
         currentChannel = channelName;
     }
 
     public String getCurrentChannel() { return currentChannel; }
+
+    void setHasCreatedTempChannel() {
+        this.hasCreatedTempChannel = true;
+    }
+
+    boolean getHasCreatedTempChannel() { return !hasCreatedTempChannel; }
 
 }

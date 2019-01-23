@@ -1,28 +1,20 @@
 package nspirep2p.application.client;
 
-import nspirep2p.application.client.connection.ConnectionHandler;
-import nspirep2p.communication.protocol.Client;
-import nspirep2p.communication.protocol.ClientType;
-import nspirep2p.communication.protocol.v1.CommunicationParser;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class MainInterface extends JFrame implements AWTEventListener {
     private JFrame frame;
-    private JButton sendButton, changeUsernameButton;
-    private JButton sendMessage, createTempChannel, deleteTempChannel;
+    private JButton sendButton, changeUsernameButton, enterGroup;
     private JLabel messages;
     private JTextField userInput;
-    private JTextArea users;
-    private HashMap<String, JLabel> channel;
-    private JPanel channelPanel;
+    private HashMap<String, JLabel> channel, users;
+    private JPanel channelPanel, userPanel;
 
     MainInterface() {
         //detects if a key is pressed
@@ -44,8 +36,8 @@ public class MainInterface extends JFrame implements AWTEventListener {
     private void setPanel() {
         setChannelPanel();
         setChatPanel();
-        setUserPanel();
         setButtonPane();
+        setUserPanel();
         frame.setVisible(true);
     }
 
@@ -79,13 +71,14 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(jScrollPane, BorderLayout.LINE_START);
     }
 
-
-
     private void setUserPanel() {
-        JPanel userPanel = new JPanel();
-        users = new JTextArea("Users");
-        userPanel.add(users);
-        frame.add(userPanel, BorderLayout.LINE_END);
+        JLabel label = new JLabel("User: ");
+        userPanel = new JPanel();
+        userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.PAGE_AXIS));
+        users = new HashMap<>();
+        userPanel.add(label);
+        JScrollPane jScrollPane = new JScrollPane(userPanel);
+        frame.add(jScrollPane, BorderLayout.LINE_END);
     }
 
     private void setButtonPane() {
@@ -94,17 +87,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         changeUsernameButton.addActionListener(actionListener);
         buttonPanel.add(changeUsernameButton);
 
-        sendMessage = new JButton("message");
-        sendMessage.addActionListener(actionListener);
-        buttonPanel.add(sendMessage);
-
-        createTempChannel = new JButton("CreateTempChannel");
-        createTempChannel.addActionListener(actionListener);
-        buttonPanel.add(createTempChannel);
-
-        deleteTempChannel = new JButton("RemoveTempChannel");
-        deleteTempChannel.addActionListener(actionListener);
-        buttonPanel.add(deleteTempChannel);
+        enterGroup = new JButton("Enter Group");
+        enterGroup.addActionListener(actionListener);
+        buttonPanel.add(enterGroup);
 
         frame.add(buttonPanel, BorderLayout.PAGE_START);
 
@@ -121,7 +106,6 @@ public class MainInterface extends JFrame implements AWTEventListener {
         text = text.replace("</html>", "");
         messages.setText(text + message + "</html>");
     }
-
 
     private void sendMessage() {
         String message = userInput.getText();
@@ -155,24 +139,59 @@ public class MainInterface extends JFrame implements AWTEventListener {
             channelPanel.add(label);
             label.setVisible(true);
         }
+
+        for (Component component : userPanel.getComponents()){
+            userPanel.remove(component);
+        }
+        channelPanel.add(new JLabel("User: "));
+        for (JLabel label : users.values()){
+            userPanel.add(label);
+            label.setVisible(true);
+        }
     }
 
     public void reload() {
-        users.setText("User:\n" + Main.mainClass.mainInterfaceData.getUsers());
+        users = new HashMap<>();
+        ArrayList<String> temp_userCreate = new ArrayList<>(Arrays.asList(Main.mainClass.mainInterfaceData.getUsers()));
+        for (String username : users.keySet()){
+            if (!temp_userCreate.contains(username)){
+                users.remove(username);
+            }
+        }
+        for (String username : temp_userCreate){
+            if (!users.containsKey(username)){
+                JLabel userLabel = new JLabel(username);
+                userLabel.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Main.mainClass.connectionHandler.invite(username, Main.mainClass.mainInterfaceData.getHasCreatedTempChannel());
+                        if (Main.mainClass.mainInterfaceData.getHasCreatedTempChannel()) {
+                            Main.mainClass.mainInterfaceData.setHasCreatedTempChannel();
+                        }
+                    }
+                    @Override
+                    public void mousePressed(MouseEvent e) { }
+                    @Override
+                    public void mouseReleased(MouseEvent e) { }
+                    @Override
+                    public void mouseEntered(MouseEvent e) { }
+                    @Override
+                    public void mouseExited(MouseEvent e) { }
+                });
+                users.put(username, userLabel);
+            }
+        }
 
         channel = new HashMap<>();
         ArrayList<String> temp_channelCreate = new ArrayList<>(Arrays.asList(Main.mainClass.mainInterfaceData.getChannel()));
-        //ArrayList<String> temp_channelCreate = (ArrayList<String>) Arrays.asList(Main.mainClass.mainInterfaceData.getChannel());
         for (String channelName : channel.keySet()){
             if (!temp_channelCreate.contains(channelName)){
                 channel.remove(channelName);
             }
         }
         for (String channelName : temp_channelCreate){
-            System.out.println("channelName: " + channelName);
             if (!channel.containsKey(channelName)){
                 JLabel channelLabel = new JLabel(channelName);
-                System.out.println(channelName);
                 channelLabel.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -182,13 +201,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
 
                     @Override
                     public void mousePressed(MouseEvent e) { }
-
                     @Override
                     public void mouseReleased(MouseEvent e) { }
-
                     @Override
                     public void mouseEntered(MouseEvent e) { }
-
                     @Override
                     public void mouseExited(MouseEvent e) { }
                 });
@@ -198,53 +214,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         redrawChannel();
     }
 
-
-    private void setSendMessage() {
-        CommunicationParser com = new CommunicationParser(ClientType.SERVER);
-        Client[] clients = new Client[10];
-        for (int i = 0; i<clients.length; i++) {
-            clients[i] = new Client();
-            clients[i].username = "Client" + i;
-            clients[i].uuid = "1234" + i;
-        }
-
-        String[] message = com.sendMessage(clients[1], "Channel", "My message");
-        //String[] message = com.getClients(clients[0],clients,false);
-        try {
-            Main.mainClass.connectionHandler.parsePackage(message);
-        } catch (Exception e) {
-
-        }
+    private void setEnterGroup() {
+        Main.mainClass.connectionHandler.setGroup(JOptionPane.showInputDialog("Enter the key!"));
     }
-
-    void setCreateTempChannel() {
-        CommunicationParser com = new CommunicationParser(ClientType.SERVER);
-        Client clients = new Client();
-        clients.username = "Client1" + ((int) (Math.random()*100));
-        clients.uuid = "1234";
-
-        String[] message = com.createTempChannel(clients);
-        try {
-            Main.mainClass.connectionHandler.parsePackage(message);
-        } catch (Exception e) {
-
-        }
-    }
-
-    void setDeleteTempChannel() {
-        CommunicationParser com = new CommunicationParser(ClientType.SERVER);
-        Client clients = new Client();
-        clients.username = "Client1";
-        clients.uuid = "1234";
-
-        String[] message = com.removeTempChannel(clients);
-        try {
-            Main.mainClass.connectionHandler.parsePackage(message);
-        } catch (Exception e) {
-
-        }
-    }
-
 
     private ActionListener actionListener = new ActionListener() {
         @Override
@@ -253,14 +225,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
             JButton button = (JButton) e.getSource();
             if (button==sendButton) {
                 sendMessage();
+            } else if (button == enterGroup) {
+                setEnterGroup();
             } else if (button == changeUsernameButton) {
                 changeUsername();
-            } else if(button == sendMessage) {
-                setSendMessage();
-            } else if(button == createTempChannel) {
-                setCreateTempChannel();
-            } else if(button == deleteTempChannel) {
-                setDeleteTempChannel();
             }
         }
     };
