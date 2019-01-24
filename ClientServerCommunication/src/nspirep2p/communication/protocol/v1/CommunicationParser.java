@@ -297,7 +297,9 @@ public class CommunicationParser {
                 push[1] += s.username+",";
                 if (sendUUID){
                     push[2] += s.uuid + ",";
-                }
+                }else{
+                    push[2] += new Random() + ",";
+                }    
             }
             push[1] = push[1].substring(0, push[1].length() -1);
             push[2] = push[2].substring(0, push[2].length() -1);
