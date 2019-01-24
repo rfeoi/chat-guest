@@ -7,8 +7,8 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 
@@ -47,13 +47,16 @@ public class ChannelManagment {
             if (!cursor.eof()) {
                 LinkedHashMap<Integer, String> unsortedChannel = new LinkedHashMap<>();
                 do {
-                    //System.out.println(new Integer((int) cursor.getInteger("level")));
                     int value = (int) cursor.getInteger("level");
                     unsortedChannel.put(value, cursor.getString("name"));
                 } while (cursor.next());
-                Object[] sorted = unsortedChannel.entrySet().stream()
-                        .sorted(Map.Entry.comparingByKey()).toArray();
-                channel = Arrays.copyOf(sorted, sorted.length, String[].class);
+                LinkedList<String> sorted = new LinkedList<>();
+                unsortedChannel.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .forEach(entry -> {
+                            sorted.add(entry.getValue());
+                        });
+                channel = sorted.toArray(new String[0]);
             }
         } finally {
             cursor.close();
