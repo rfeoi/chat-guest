@@ -53,9 +53,7 @@ public class ChannelManagment {
                 LinkedList<String> sorted = new LinkedList<>();
                 unsortedChannel.entrySet().stream()
                         .sorted(Map.Entry.comparingByKey())
-                        .forEach(entry -> {
-                            sorted.add(entry.getValue());
-                        });
+                        .forEach(entry -> sorted.add(entry.getValue()));
                 channel = sorted.toArray(new String[0]);
             }
         } finally {

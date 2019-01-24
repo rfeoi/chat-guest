@@ -71,7 +71,22 @@ public class Main {
     private void executeCommand(){
         switch (commandParser.getLastExecuted().getCommand()){
             case STOP:
+                try {
+                    connectionHandler.stop();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.exit(0);
+                break;
+            case CCHANEL:
+                try {
+                    channelManagment.createNewChannel(commandParser.getLastExecuted().getArgs()[0], Integer.parseInt(commandParser.getLastExecuted().getArgs()[1]));
+                    System.out.println("Channel created!");
+                } catch (SqlJetException e) {
+                    e.printStackTrace();
+                } catch (NumberFormatException e) {
+                    System.out.println("Use: " + commandParser.getLastExecuted().getCommand().getUsage());
+                }
                 break;
         }
     }

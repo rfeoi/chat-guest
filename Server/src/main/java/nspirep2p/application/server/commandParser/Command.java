@@ -8,7 +8,8 @@ public enum Command {
     STOP(null, 0, 0, "stop"),
     CLOSE(STOP, 0, 0, "close"),
     EXIT(STOP, 0, 0, "exit"),
-    BREAK(STOP, 0, 0, "break");
+    BREAK(STOP, 0, 0, "break"),
+    CCHANEL(null, 2, 2, "cchanel <name> <level>");
 
 
     Command parent;

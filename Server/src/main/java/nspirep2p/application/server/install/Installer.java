@@ -84,7 +84,7 @@ public class Installer {
      * Creates default roles
      */
     private void createDefaultRole(String adminPW) throws SqlJetException, NoSuchAlgorithmException {
-        Main.mainClass.permissionManagment.createNewRole("user", new Permission[]{Permission.READ_CHANNEL, Permission.CREATE_TEMP_CHANNEL}, "123");
+        Main.mainClass.permissionManagment.createNewRole("user", new Permission[]{Permission.READ_CHANNEL, Permission.CREATE_TEMP_CHANNEL}, "");
         Main.mainClass.permissionManagment.createNewRole("admin", new Permission[]{Permission.READ_CHANNEL, Permission.CONTROL_OTHER, Permission.CREATE_TEMP_CHANNEL, Permission.KICK_USER, Permission.MANAGE_PUBLIC_CHANNEL, Permission.READ_UUID, Permission.JOIN_ANY}, adminPW);
     }
 
