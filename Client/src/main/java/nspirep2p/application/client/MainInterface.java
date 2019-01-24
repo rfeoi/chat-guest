@@ -99,12 +99,16 @@ public class MainInterface extends JFrame implements AWTEventListener {
         String text = messages.getText();
         text = text.replace("</html>", "");
         messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
+        frame.setVisible(false);
+        frame.setVisible(true);
     }
 
     public void setNewServerMessage(String message) {
         String text = messages.getText();
         text = text.replace("</html>", "");
         messages.setText(text + message + "</html>");
+        frame.setVisible(false);
+        frame.setVisible(true);
     }
 
     private void sendMessage() {
@@ -143,11 +147,13 @@ public class MainInterface extends JFrame implements AWTEventListener {
         for (Component component : userPanel.getComponents()){
             userPanel.remove(component);
         }
-        channelPanel.add(new JLabel("User: "));
+        userPanel.add(new JLabel("User: "));
         for (JLabel label : users.values()){
             userPanel.add(label);
             label.setVisible(true);
         }
+        frame.setVisible(false);
+        frame.setVisible(true);
     }
 
     public void reload() {

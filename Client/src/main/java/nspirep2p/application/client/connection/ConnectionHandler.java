@@ -41,7 +41,6 @@ public class ConnectionHandler extends Client {
         }
 
         return connectToServer(getIP(ip), getPort(ip), username);
-        //TODO sockets and some fun
     }
 
     private int getPort(String ip) {
@@ -112,26 +111,26 @@ public class ConnectionHandler extends Client {
         sendMessage(parser.enterGroup(this, key));
     }
 
-    void parsePackage(String[] lines) throws WrongPackageFormatException {
+    public void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {
             case CHANGE_USERNAME:
                 String oldUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]);
                 String newUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]);
-                if (oldUsername == null) {
+                if (oldUsername.equals("null")) {
                     Main.mainClass.mainInterface.setNewServerMessage("<br>" + newUsername + "</br> joined");
                     Main.mainClass.mainInterfaceData.addUser(newUsername);
-                } else if (newUsername == null) {
+                } else if (newUsername.equals("null")) {
                     Main.mainClass.mainInterface.setNewServerMessage("<br>" + oldUsername + "</br> left");
                     Main.mainClass.mainInterfaceData.removeUser(oldUsername);
                 } else {
-                    Main.mainClass.mainInterfaceData.changeUsername(parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]), parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]));
+                    Main.mainClass.mainInterfaceData.changeUsername(oldUsername, newUsername);
                 }
                 break;
             case MOVE:
                 String username = parsed.getArg(Function.MOVE.getParameters()[0]);
                 String changeChannel = parsed.getArg(Function.MOVE.getParameters()[1]);
-                if (changeChannel.equals("another Channel")/* && username.wasInYourChannel*/) {
+                if (!changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel()) && Main.mainClass.mainInterfaceData.userIsInYourChannel(username)) {
                     Main.mainClass.mainInterface.setNewServerMessage("<br>" + username + "</br> left");
                     Main.mainClass.mainInterfaceData.removeUser(username);
                 } else if (changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel())) {
@@ -147,17 +146,17 @@ public class ConnectionHandler extends Client {
                     move(parsed.getArg(Function.INVITE.getParameters()[0]));
                 }
                 break;
-            case CREATE_TEMP_CHANNEL: //DONE
+            case CREATE_TEMP_CHANNEL:
                 Main.mainClass.mainInterfaceData.addChannel(parsed.getArg(Function.CREATE_TEMP_CHANNEL.getParameters()[0]));
                 Main.mainClass.mainInterface.reload();
                 break;
-            case DELETE_TEMP_CHANNEL: //DONE
+            case DELETE_TEMP_CHANNEL:
                 Main.mainClass.mainInterfaceData.removeChannel(parsed.getArg(Function.DELETE_TEMP_CHANNEL.getParameters()[0]));
                 break;
             case SEND_ERROR:
                 JOptionPane.showMessageDialog(null, parsed.getArg(Function.SEND_ERROR.getParameters()[0]));
                 break;
-            case GET_CLIENTS: //DONE
+            case GET_CLIENTS:
                 String[] userList = parsed.getArg(Function.GET_CLIENTS.getParameters()[0]).split(",");
                 for (String user : userList) {
                     Main.mainClass.mainInterfaceData.addUser(user);
@@ -169,7 +168,7 @@ public class ConnectionHandler extends Client {
                     Main.mainClass.mainInterfaceData.addChannel(channel);
                 }
                 break;
-            case SEND_MESSAGE: //DONE (without channel)
+            case SEND_MESSAGE:
                 Main.mainClass.mainInterface.setNewMessage(parsed.getArg(Function.SEND_MESSAGE.getParameters()[2]),Main.mainClass.getTime(),parsed.getArg(Function.SEND_MESSAGE.getParameters()[1]));
                 break;
             default:
@@ -179,6 +178,5 @@ public class ConnectionHandler extends Client {
         }
         Main.mainClass.mainInterface.reload();
     }
-
 
 }

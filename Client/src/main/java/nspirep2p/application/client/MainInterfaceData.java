@@ -55,12 +55,23 @@ public class MainInterfaceData {
         currentChannel = channelName;
     }
 
-    public String getCurrentChannel() { return currentChannel; }
+    public String getCurrentChannel() {
+        return currentChannel;
+    }
 
     void setHasCreatedTempChannel() {
         this.hasCreatedTempChannel = true;
     }
 
     boolean getHasCreatedTempChannel() { return !hasCreatedTempChannel; }
+
+    public boolean userIsInYourChannel(String username) {
+        for (String user: users) {
+            if (user.equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
