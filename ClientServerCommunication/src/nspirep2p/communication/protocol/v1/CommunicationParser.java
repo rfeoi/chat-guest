@@ -94,7 +94,7 @@ public class CommunicationParser {
             push = new String[4];
             push[0] = "function=CHANGE_USERNAME";
             push[1] = "auth.uuid=" + client.uuid;
-            push[2] = "username" + username;
+            push[2] = "username=" + username;
             push[3] = END_WAIT;
             return push;
         } else if (clientType == ClientType.SERVER) {
