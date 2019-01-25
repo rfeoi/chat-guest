@@ -3,7 +3,6 @@ package nspirep2p.communication.protocol.v1;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -385,6 +384,7 @@ public class CommunicationParser {
      * @return a Package
      * @throws WrongPackageFormatException If the package is wrong formatted
      */
+    @SuppressWarnings("Duplicates")
     private Package parseClientPackage(String[] clientIncoming) throws WrongPackageFormatException {
         Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
         if (clientPackage == null)
@@ -394,9 +394,9 @@ public class CommunicationParser {
         clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
         if(clientIncoming.length>2) {
             for (int i = 2; i < clientIncoming.length - 1; i++) {
-                if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
+                if (!clientIncoming[i].contains("="))
                     throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
-                clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+                clientPackage.addArg(clientIncoming[i].split("=", 2)[0], clientIncoming[i].split("=", 2)[1]);
             }
         }
         if (clientIncoming[clientIncoming.length - 1] == END_WAIT) {
@@ -413,6 +413,7 @@ public class CommunicationParser {
      * @return a Package
      * @throws WrongPackageFormatException If the package is wrong formatted
      */
+    @SuppressWarnings("Duplicates")
     private Package parseServerPackage(String[] clientIncoming) throws WrongPackageFormatException {
         Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
         if (clientPackage == null)
@@ -420,9 +421,9 @@ public class CommunicationParser {
         clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
         if(clientIncoming.length > 2) {
             for (int i = 1; i < clientIncoming.length - 1; i++) {
-                if (!clientIncoming[i].contains("=") || clientIncoming[i].split("=").length != 2)
+                if (!clientIncoming[i].contains("="))
                     throw new WrongPackageFormatException(clientIncoming[i], "Arg wrong defined");
-                clientPackage.addArg(clientIncoming[i].split("=")[0], clientIncoming[i].split("=")[1]);
+                clientPackage.addArg(clientIncoming[i].split("=", 2)[0], clientIncoming[i].split("=", 2)[1]);
             }
         }
         if (clientIncoming[clientIncoming.length - 1] == END_WAIT) {
