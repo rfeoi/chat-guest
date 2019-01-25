@@ -249,12 +249,12 @@ public class CommunicationParser {
      * @param client     the client who wants to kick the user (not needed on serverside)
      * @param reason     the reason why the client should be kicked
      */
-    public String[] kick(Client client, String toBeKicked, String reason) {
+    public String[] kick(Client client, Client toBeKicked, String reason) {
         if (clientType == ClientType.CLIENT) {
             String[] push = new String[5];
             push[0] = "function=KICK";
             push[1] = "auth.uuid=" + client.uuid;
-            push[2] = "username=" + toBeKicked;
+            push[2] = "username=" + toBeKicked.username;
             push[3] = "reason=" + reason;
             push[4] = END_BREAK;
             return push;
