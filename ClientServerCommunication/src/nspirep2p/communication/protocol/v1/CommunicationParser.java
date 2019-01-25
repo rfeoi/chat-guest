@@ -350,6 +350,7 @@ public class CommunicationParser {
                 push[2] = Function.ENTER_GROUP.getParameters()[0] + "=" + hashed;
                 push[3] = END_BREAK;
                 return push;
+
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
