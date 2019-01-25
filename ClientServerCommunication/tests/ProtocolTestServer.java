@@ -1,18 +1,12 @@
-
-
-import nspirep2p.communication.protocol.*;
+import nspirep2p.communication.protocol.Client;
+import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
 import nspirep2p.communication.protocol.v1.Function;
 import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.channels.Channel;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -171,6 +165,6 @@ public class ProtocolTestServer {
         assertEquals(cPackage.getArg(Function.GET_CHANNELS.getParameters()[0]),"1,2,3,4,5");
 
     }
-
+    //TODO write test for kick
 
 }

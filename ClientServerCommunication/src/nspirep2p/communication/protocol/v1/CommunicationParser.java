@@ -226,7 +226,6 @@ public class CommunicationParser {
             push[3] = "message=" + message;
             push[4] = END_BREAK;
             return push;
-
         } else if (clientType == ClientType.SERVER) {
             String[] push = new String[5];
             push[0] = "function=SEND_MESSAGE";
@@ -238,6 +237,37 @@ public class CommunicationParser {
         }
         return null;
     }
+
+    /**
+     * For client:
+     * Try to kick user
+     * <p>
+     * For server:
+     * Inform client that he got kicked
+     *
+     * @param toBeKicked the client which should be kicked (not needed on serverside)
+     * @param client     the client who wants to kick the user (not needed on serverside)
+     * @param reason     the reason why the client should be kicked
+     */
+    public String[] kick(Client client, String toBeKicked, String reason) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[5];
+            push[0] = "function=KICK";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = "username=" + toBeKicked;
+            push[3] = "reason=" + reason;
+            push[4] = END_BREAK;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[3];
+            push[0] = "function=SEND_MESSAGE";
+            push[1] = "reason=" + reason;
+            push[2] = END_BREAK;
+            return push;
+        }
+        return null;
+    }
+
 
     /**
      *

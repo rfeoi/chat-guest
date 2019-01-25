@@ -74,6 +74,9 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             case GET_CHANNELS:
                 connectionHandler.main.serverHandler.sendChannelsToClient(this);
                 break;
+            case KICK:
+                connectionHandler.main.serverHandler.kickClient(client, parsed.getArg(Function.KICK.getParameters()[0]), parsed.getArg(Function.KICK.getParameters()[1]));
+                break;
             default:
                 connectionHandler.main.serverHandler.sendErrorMessage(this, "Something went wrong! Server does not implements " + parsed.getFunction());
                 break;

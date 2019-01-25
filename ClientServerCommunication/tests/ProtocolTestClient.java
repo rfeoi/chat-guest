@@ -1,7 +1,3 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
@@ -10,10 +6,12 @@ import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * A Test class
@@ -117,4 +115,5 @@ public class ProtocolTestClient {
         assertEquals(responsePackage.getArg(Function.ENTER_GROUP.getParameters()[0]),hashed);
 
     }
+    //TODO write test for kick
 }

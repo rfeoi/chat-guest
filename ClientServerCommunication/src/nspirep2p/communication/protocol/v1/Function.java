@@ -16,7 +16,8 @@ public enum Function {
     GET_CLIENTS(new String[]{"names","uuid"}),
     GET_CHANNELS(new String[]{"channels"}),
     SEND_ERROR(new String[]{"error"}),
-    ENTER_GROUP(new String[]{"hashed"});
+    ENTER_GROUP(new String[]{"hashed"}),
+    KICK(new String[]{"username", "reason"});
 
 
     String[] parameters;

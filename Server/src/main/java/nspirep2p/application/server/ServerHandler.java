@@ -54,7 +54,7 @@ public class ServerHandler {
             if (!privateChannels.contains(client)) {
                 privateChannels.add(client);
                 connectionHandler.broadcast(connectionHandler.parser.createTempChannel(client));
-                allowedClients.put(client, new ArrayList<Client>());
+                allowedClients.put(client, new ArrayList<>());
                 allowedClients.get(client).add(client);
                 forceMove(client, client.username);
             } else {
@@ -78,6 +78,35 @@ public class ServerHandler {
         client2.send(connectionHandler.parser.inviteClient(client, client2));
     }
 
+
+    /**
+     * If a user tries to kick a different user.
+     *
+     * @param kicker     the client who tries to kick
+     * @param toBeKicked the client who sould be kicked
+     * @param reason     The reason why the client gets kicked
+     */
+    public void kickClient(Client kicker, String toBeKicked, String reason) {
+        if (kicker.hasPermission(Permission.KICK_USER)) {
+            forceKick(getClientByUsername(toBeKicked), reason);
+            System.out.println("User " + toBeKicked + " gots kicked by " + kicker.username);
+        } else {
+            sendMessage(kicker, Permission.KICK_USER.getNoPermissionError());
+        }
+    }
+
+    /**
+     * Force kick a user
+     *
+     * @param toBeKicked the user who gets kicked
+     * @param reason     the reason why
+     */
+    private void forceKick(Client toBeKicked, String reason) {
+        if (toBeKicked != null) {
+            toBeKicked.send(connectionHandler.parser.kick(null, null, reason));
+            quit(toBeKicked);
+        }
+    }
 
     /**
      * Send Message from Client

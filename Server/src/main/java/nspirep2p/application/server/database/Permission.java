@@ -7,7 +7,7 @@ public enum Permission {
     //Moderator permissions
     JOIN_ANY,
     MANAGE_PUBLIC_CHANNEL,
-    KICK_USER,
+    KICK_USER("Sorry you do not have the permission to kick a different user!"),
     //Admin permissions
     READ_UUID,
     CONTROL_OTHER("Please do not pretend to say, that you are a different one.");
