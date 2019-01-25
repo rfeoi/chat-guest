@@ -6,6 +6,7 @@ import nspirep2p.communication.protocol.ClientType;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Random;
 
 /**
@@ -342,7 +343,7 @@ public class CommunicationParser {
     public String[] enterGroup(Client client, String cleartextPassword) {
         if (clientType == ClientType.CLIENT) {
             try {
-                String hashed = new String(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+                String hashed = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes()));
                 String[] push = new String[4];
                 push[0] = "function=ENTER_GROUP";
                 push[1] = "auth.uuid=" + client.uuid;
