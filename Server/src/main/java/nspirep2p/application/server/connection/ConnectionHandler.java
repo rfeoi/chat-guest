@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 /**
  * Handels the Connections serverside
@@ -67,13 +68,15 @@ public class ConnectionHandler {
      *
      * @param lines which should be printed
      */
-    @SuppressWarnings("CatchMayIgnoreException")
     public void broadcast(String[] lines) {
         try {
-            for (Client client : clients) {
+            ArrayList<Client> clients_clone = (ArrayList<Client>) clients.clone();
+            for (Iterator<Client> it = clients_clone.iterator(); it.hasNext(); ) {
+                Client client = it.next();
                 client.send(lines);
             }
         } catch (ConcurrentModificationException e) {
+            e.printStackTrace();
         }
     }
 

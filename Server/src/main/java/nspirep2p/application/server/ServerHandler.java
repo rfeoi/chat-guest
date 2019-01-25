@@ -33,6 +33,13 @@ public class ServerHandler {
         if (newUsername.equals("null")) return;
         if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
             connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
+            System.out.println("Changed username from " + client.username + " to " + newUsername);
+            //Change the name of the channel user are in (if the user has an private channel)
+            if (privateChannels.contains(client) && getClientsInChannel(client.username).length != 0) {
+                for (Client userInChannel : getClientsInChannel(client.username)) {
+                    userInChannel.setChannel(newUsername);
+                }
+            }
             client.username = newUsername;
         }
     }
@@ -69,7 +76,6 @@ public class ServerHandler {
         if (client2 == null) return;
         allowedClients.get(client).add(client2);
         client2.send(connectionHandler.parser.inviteClient(client, client2));
-
     }
 
 
@@ -205,6 +211,7 @@ public class ServerHandler {
      * @param client which quits
      */
     public void quit(Client client) {
+        System.out.println("The client " + client.username + " left.");
         connectionHandler.clients.remove(client);
         connectionHandler.deleteThread(client);
         deletePrivateChannel(client);
@@ -219,6 +226,7 @@ public class ServerHandler {
      * @param hashed key
      */
     public void enterGroup(Client client, String hashed) {
+        System.out.println("Client " + client.username + " tried to change role!");
         client.setRole(main.permissionManagment.checkKey(hashed));
     }
 

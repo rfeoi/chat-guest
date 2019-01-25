@@ -94,7 +94,10 @@ public class PermissionManagment {
      * @return if the key is right
      */
     private boolean checkKey(String key, String role) {
-        return keys.get(role).equals(key);
+        if (role != null && keys.containsKey(role)) {
+            return keys.get(role).equals(key);
+        }
+        return false;
     }
 
 
@@ -105,7 +108,7 @@ public class PermissionManagment {
      * @return role, if wrong returns standard role (user)
      */
     public String checkKey(String key) {
-        for (String role : keys.values()) {
+        for (String role : keys.keySet()) {
             if (checkKey(key, role)) {
                 return role;
             }
