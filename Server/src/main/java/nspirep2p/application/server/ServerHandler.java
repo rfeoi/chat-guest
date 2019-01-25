@@ -32,14 +32,11 @@ public class ServerHandler {
     public void pushUsernameToClients(Client client, String newUsername) {
         if (newUsername.equals("null")) return;
         if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
-            connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
             System.out.println("Changed username from " + client.username + " to " + newUsername);
             //Change the name of the channel user are in (if the user has an private channel)
-            if (privateChannels.contains(client) && getClientsInChannel(client.username).length != 0) {
-                for (Client userInChannel : getClientsInChannel(client.username)) {
-                    userInChannel.setChannel(newUsername);
-                }
-            }
+            if (privateChannels.contains(client) && getClientsInChannel(client.username).length != 0)
+                for (Client userInChannel : getClientsInChannel(client.username)) userInChannel.setChannel(newUsername);
+            connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
             client.username = newUsername;
         }
     }
