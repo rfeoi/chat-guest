@@ -43,6 +43,11 @@ public class ConnectionHandler extends Client {
         return connectToServer(getIP(ip), getPort(ip), username);
     }
 
+    /**
+     * Splits IP-address and port
+     * @param ip ipAddress and port in a String
+     * @return the port
+     */
     private int getPort(String ip) {
         if (ip.contains(":")){
             port = Integer.parseInt(ip.split(":")[1]);
@@ -50,6 +55,11 @@ public class ConnectionHandler extends Client {
         return port;
     }
 
+    /**
+     * Splits IP-address and port
+     * @param ip ipAddress and port in a String
+     * @return the ip
+     */
     private String getIP(String ip) {
         if (ip.contains(":")){
             ip =  ip.split(":")[0];
@@ -57,14 +67,22 @@ public class ConnectionHandler extends Client {
         return ip;
     }
 
+    /**
+     * Starts the connection to the server and sends the starting messages/functions.
+     * @param ip ipAddress of the server
+     * @param port port of the server
+     * @param username username of the user
+     * @return if the connection has succeeded
+     */
     private boolean connectToServer(String ip, int port, String username) {
         try {
             Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
             sendMessage(parser.doHandshake(this));
 
-            sendMessage(parser.pushUsername(this, username));
             this.username = username;
+            System.out.println(username);
+            sendMessage(parser.pushUsername(this, username));
 
             sendMessage(parser.getChannels(this, null));
 
@@ -79,6 +97,10 @@ public class ConnectionHandler extends Client {
         return true;
     }
 
+    /**
+     * Sends a multiple line message to the server.
+     * @param message the messages in an array.
+     */
     private void sendMessage(String[] message) {
         for (String line:message) {
             writer.println(line);
@@ -86,18 +108,35 @@ public class ConnectionHandler extends Client {
         writer.flush();
     }
 
+    /**
+     * Creates a message
+     * @param message the content of the message
+     */
     public void createAMessage(String message) {
         sendMessage(Main.mainClass.communicationParser.sendMessage(this, null, message));
     }
 
+    /**
+     * Changes the username
+     * @param newUsername the new username
+     */
     public void changeUsername(String newUsername) {
         sendMessage(parser.pushUsername(this, newUsername));
     }
 
+    /**
+     * Moves the client to another channel.
+     * @param to the other channel
+     */
     public void move(String to) {
         sendMessage(parser.moveClient(this, to));
     }
 
+    /**
+     * Invites another user and creates a channel if necessary.
+     * @param user the user that will be invited
+     * @param createTempChannel whether (not) a temporary channel is necessary.
+     */
     public void invite(String user, boolean createTempChannel) {
         if (createTempChannel) {
             sendMessage(parser.createTempChannel(this));
@@ -107,10 +146,19 @@ public class ConnectionHandler extends Client {
         sendMessage(parser.inviteClient(this, client));
     }
 
+    /**
+     * Enters the client in a group.
+     * @param key the password
+     */
     public void setGroup(String key) {
         sendMessage(parser.enterGroup(this, key));
     }
 
+    /**
+     * Parses the package which the client receives from the server.
+     * @param lines the package in an array.
+     * @throws WrongPackageFormatException if the package does not conform to the typical package.
+     */
     public void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         switch (parsed.getFunction()) {

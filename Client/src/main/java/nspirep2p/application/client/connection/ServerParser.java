@@ -29,6 +29,10 @@ public class ServerParser implements Runnable{
         multipleLinesReader = new MultipleLinesReader();
     }
 
+    /**
+     * Constantly checks if the server is sending anything
+     * and parses it then.
+     */
     @Override
     public void run() {
         while (!socket.isClosed()) {
@@ -51,8 +55,9 @@ public class ServerParser implements Runnable{
                 }
                 //Main.mainClass.mainInterface.setNewMessage("Server", Main.mainClass.getTime(), message);
             } catch (IOException | NullPointerException e) {
+                System.err.println("An Exception");
                 System.out.println("Closing down connection!");
-                //e.printStackTrace();
+                e.printStackTrace();
                 break;
             }
         }

@@ -23,6 +23,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         toolkit.addAWTEventListener(this, eventMask);
     }
 
+    /**
+     * Initializes the frame
+     */
     void start() {
         frame = new JFrame();
         frame.setLayout(new BorderLayout());
@@ -33,14 +36,20 @@ public class MainInterface extends JFrame implements AWTEventListener {
         setPanel();
     }
 
+    /**
+     * Starts the initialization process of the panels.
+     */
     private void setPanel() {
         setChannelPanel();
         setChatPanel();
-        setButtonPane();
+        setButtonPanel();
         setUserPanel();
         frame.setVisible(true);
     }
 
+    /**
+     * Sets the content of the chat-panel.
+     */
     private void setChatPanel() {
         JPanel chatPanel = new JPanel(new BorderLayout());
 
@@ -61,6 +70,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(chatPanel, BorderLayout.CENTER);
     }
 
+    /**
+     * Sets the content of the channel-panel.
+     */
     private void setChannelPanel() {
         JLabel label = new JLabel("Channel: ");
         channelPanel = new JPanel();
@@ -71,6 +83,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(jScrollPane, BorderLayout.LINE_START);
     }
 
+    /**
+     * Sets the content of the user-panel.
+     */
     private void setUserPanel() {
         JLabel label = new JLabel("User: ");
         userPanel = new JPanel();
@@ -81,7 +96,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.add(jScrollPane, BorderLayout.LINE_END);
     }
 
-    private void setButtonPane() {
+    /**
+     * Sets the content of the button-panel.
+     */
+    private void setButtonPanel() {
         JPanel buttonPanel = new JPanel();
         changeUsernameButton = new JButton("Change username");
         changeUsernameButton.addActionListener(actionListener);
@@ -95,6 +113,12 @@ public class MainInterface extends JFrame implements AWTEventListener {
 
     }
 
+    /**
+     * Displays a new message
+     * @param from the user that sent the message.
+     * @param time the time when the message was sent.
+     * @param message the content of the message.
+     */
     public void setNewMessage(String from, String time, String message) {
         String text = messages.getText();
         text = text.replace("</html>", "");
@@ -103,6 +127,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Displays a new Server message.
+     * @param message the message.
+     */
     public void setNewServerMessage(String message) {
         String text = messages.getText();
         text = text.replace("</html>", "");
@@ -111,6 +139,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.setVisible(true);
     }
 
+    /**
+     * Sends a message to the server.
+     */
     private void sendMessage() {
         String message = userInput.getText();
         if (message.isEmpty()) return;
@@ -119,6 +150,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         //setNewMessage(Main.mainClass.getUsername(), Main.mainClass.getTime(), message);
     }
 
+    /**
+     * Changes your username
+     */
     private void changeUsername() {
         String username = "";
         try {
@@ -134,28 +168,44 @@ public class MainInterface extends JFrame implements AWTEventListener {
            Main.mainClass.connectionHandler.changeUsername(username);
     }
 
-    private void redrawChannel(){
-        for (Component component : channelPanel.getComponents()){
-            channelPanel.remove(component);
-        }
-        channelPanel.add(new JLabel("Channel: "));
-        for (JLabel label : channel.values()){
-            channelPanel.add(label);
-            label.setVisible(true);
+    /**
+     * Redraws the channel- and user-panel.
+     */
+    private void redraw(){
+        if (channelPanel != null ){
+            if (channelPanel.getComponents() != null){
+                for (Component component : channelPanel.getComponents()){
+                    channelPanel.remove(component);
+                }
+            }
+            channelPanel.add(new JLabel("Channel: "));
+            for (JLabel label : channel.values()){
+                channelPanel.add(label);
+                label.setVisible(true);
+            }
         }
 
-        for (Component component : userPanel.getComponents()){
-            userPanel.remove(component);
-        }
-        userPanel.add(new JLabel("User: "));
-        for (JLabel label : users.values()){
-            userPanel.add(label);
-            label.setVisible(true);
+
+
+        if (userPanel != null) {
+            if (userPanel.getComponents() != null){
+                for (Component component : userPanel.getComponents()){
+                    userPanel.remove(component);
+                }
+            }
+            userPanel.add(new JLabel("User: "));
+            for (JLabel label : users.values()){
+                userPanel.add(label);
+                label.setVisible(true);
+            }
         }
         frame.setVisible(false);
         frame.setVisible(true);
     }
 
+    /**
+     * Gets the updated data
+     */
     public void reload() {
         users = new HashMap<>();
         ArrayList<String> temp_userCreate = new ArrayList<>(Arrays.asList(Main.mainClass.mainInterfaceData.getUsers()));
@@ -217,13 +267,19 @@ public class MainInterface extends JFrame implements AWTEventListener {
                 channel.put(channelName, channelLabel);
             }
         }
-        redrawChannel();
+        redraw();
     }
 
+    /**
+     * Gets the password to join a group
+     */
     private void setEnterGroup() {
         Main.mainClass.connectionHandler.setGroup(JOptionPane.showInputDialog("Enter the key!"));
     }
 
+    /**
+     * Checks if a button is pressed and starts the matching function.
+     */
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -239,6 +295,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         }
     };
 
+    /**
+     * Checks if the "Enter" key is pressed and sends the message then.
+     * @param event The event which is triggered when the key is pressed.
+     */
     @Override
     public void eventDispatched(AWTEvent event) {
         int ID = event.getID();

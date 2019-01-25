@@ -15,12 +15,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-/**
- * TODO:
- * GUI
- * Communication between server and TI
- * Tests(?)
- */
 public class Main {
     private UserInterface userInterface;
     public MainInterface mainInterface;
@@ -46,6 +40,9 @@ public class Main {
         communicationParser = new CommunicationParser(ClientType.CLIENT);
     }
 
+    /**
+     * Starts the client
+     */
     private void start() {
         String[] properties = new String[2];
         if (userPropetySave.hasConfigFile()) {
@@ -62,16 +59,29 @@ public class Main {
         }
     }
 
-
+    /**
+     * Gets the current time
+     * @return Returns the time as a String
+     */
     public String getTime() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         return sdf.format(cal.getTime());
     }
 
+    /**
+     * Gets the username
+     * @return Returns the username
+     */
     String getUsername() {
         return username;
     }
 
-    String getIP() { return ip; }
+    /**
+     * Gets the IP
+     * @return Returns the IP
+     */
+    String getIP() {
+        return ip;
+    }
 }
