@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 /**
  * A Test class
@@ -106,8 +107,9 @@ public class ProtocolTestClient {
         CommunicationParser parser = new CommunicationParser(ClientType.SERVER);
         Client client = new Client();
         client.uuid = "1234";
-        String cleartextPassword = "abcd";
-        String hashed = new String(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        String cleartextPassword = "Hello";
+        String hashed = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(cleartextPassword.getBytes()));
+        hashed = hashed.substring(0,hashed.length()-2);
         String[] enterGroup = cparser.enterGroup(client,cleartextPassword);
         Package responsePackage = parser.parsePackage(enterGroup);
         assertEquals(responsePackage.getFunction(), Function.ENTER_GROUP);
