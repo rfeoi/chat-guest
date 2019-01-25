@@ -13,11 +13,14 @@ public class MultipleLinesReader {
     }
 
     public void read(String line){
-        arrayList.add(line);
+        if (line != null) {
+            arrayList.add(line);
+        }
     }
 
     public boolean isEnd(){
         if (arrayList == null) return false;
+        if (!(arrayList.size() > 0)) return false;
         String last = arrayList.get(arrayList.size() - 1);
         if(last == null) return false;
         return last.equals(CommunicationParser.END_WAIT) || last.equals(CommunicationParser.END_BREAK);

@@ -1,8 +1,8 @@
 package nspirep2p.application.server.connection;
 
 import nspirep2p.application.server.database.Permission;
-import nspirep2p.communication.protocol.v1.*;
 import nspirep2p.communication.protocol.v1.Package;
+import nspirep2p.communication.protocol.v1.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -57,7 +57,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 connectionHandler.main.serverHandler.createTempChannel(client);
                 break;
             case INVITE:
-                connectionHandler.main.serverHandler.inviteClient(client, Function.INVITE.getParameters()[0]);
+                connectionHandler.main.serverHandler.inviteClient(client, parsed.getArg(Function.INVITE.getParameters()[0]));
                 break;
             case MOVE:
                 connectionHandler.main.serverHandler.move(client, parsed.getArg(Function.MOVE.getParameters()[1]));
@@ -104,7 +104,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             connectionHandler.main.serverHandler.quit(this);
         }
         multipleLinesReader.clear();
-        System.out.println("New Client connected!");
+        System.out.println("New Client connected! (From " + userSocket.getInetAddress().getHostAddress() + ")");
         //Do normal package parsing
         while (userSocket.isConnected() && connectionHandler.clients.contains(this)) {
             try {
@@ -123,7 +123,6 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             }
         }
 
-        //TODO WHENEVER CLOSE INFORM CLIENTS
         //Do close socket
         if (userSocket.isConnected()) {
             try {

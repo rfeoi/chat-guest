@@ -30,9 +30,10 @@ public class ServerHandler {
      * @param newUsername the new username
      */
     public void pushUsernameToClients(Client client, String newUsername) {
+        if (newUsername.equals("null")) return;
         if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
-            client.username = newUsername;
             connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
+            client.username = newUsername;
         }
     }
 
@@ -91,6 +92,7 @@ public class ServerHandler {
      * @param message the message which should be send
      */
     public void sendErrorMessage(Client client, String message) {
+        //TODO "none" check
         client.send(connectionHandler.parser.sendError(message));
     }
 

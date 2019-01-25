@@ -7,6 +7,7 @@ import nspirep2p.communication.protocol.v1.CommunicationParser;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Handels the Connections serverside
@@ -66,9 +67,13 @@ public class ConnectionHandler {
      *
      * @param lines which should be printed
      */
+    @SuppressWarnings("CatchMayIgnoreException")
     public void broadcast(String[] lines) {
-        for (Client client : clients) {
+        try {
+            for (Client client : clients) {
                 client.send(lines);
+            }
+        } catch (ConcurrentModificationException e) {
         }
     }
 
