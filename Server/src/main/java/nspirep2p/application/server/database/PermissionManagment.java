@@ -8,9 +8,9 @@ import org.tmatesoft.sqljet.core.table.ISqlJetCursor;
 import org.tmatesoft.sqljet.core.table.ISqlJetTable;
 import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.HashMap;
 
 public class PermissionManagment {
@@ -124,7 +124,7 @@ public class PermissionManagment {
      * @throws NoSuchAlgorithmException     If something with keying went wrong
      */
     public void createNewRole(String name, Permission[] permissions, String key) throws SqlJetException, NoSuchAlgorithmException {
-        String hashed = new String(MessageDigest.getInstance("MD5").digest(key.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        String hashed = Base64.getEncoder().encodeToString(MessageDigest.getInstance("MD5").digest(key.getBytes()));
         database.beginTransaction(SqlJetTransactionMode.WRITE);
         ISqlJetTable table = database.getTable("roles");
         String json = gson.toJson(permissions, Permission[].class);

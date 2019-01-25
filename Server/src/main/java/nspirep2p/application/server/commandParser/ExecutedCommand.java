@@ -22,7 +22,7 @@ public class ExecutedCommand {
                 return;
             }
             args = new String[splitCommand.length - 1];
-            System.arraycopy(splitCommand, 0, args, 1, splitCommand.length - 1);
+            System.arraycopy(splitCommand, 1, args, 0, splitCommand.length - 1);
             if (command.minParameter > args.length || command.maxParameter < args.length){
                 error = "TOOLESSPARAMETER";
             }

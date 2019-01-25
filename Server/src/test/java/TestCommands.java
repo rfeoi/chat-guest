@@ -1,7 +1,6 @@
 import nspirep2p.application.server.commandParser.Command;
 import org.junit.jupiter.api.Test;
 
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
@@ -25,6 +24,8 @@ public class TestCommands {
         assertEquals(0, Command.CLOSE.getMaxParameter());
         assertEquals(0, Command.EXIT.getMinParameter());
         assertEquals(0, Command.EXIT.getMaxParameter());
+        assertEquals(2, Command.CCHANEL.getMaxParameter());
+        assertEquals(2, Command.CCHANEL.getMinParameter());
     }
 
     /**
@@ -36,6 +37,7 @@ public class TestCommands {
         assertEquals(Command.STOP, Command.CLOSE.getParent());
         assertEquals(Command.STOP, Command.EXIT.getParent());
         assertNull(Command.STOP.getParent());
+        assertNull(Command.CCHANEL.getParent());
     }
 
 }

@@ -2,6 +2,7 @@ package nspirep2p.application.server;
 
 import nspirep2p.application.server.commandParser.CommandParser;
 import nspirep2p.application.server.connection.ConnectionHandler;
+import nspirep2p.application.server.database.ChannelManagment;
 import nspirep2p.application.server.database.DatabaseManaging;
 import nspirep2p.application.server.database.PermissionManagment;
 import nspirep2p.application.server.database.ServerSetting;
@@ -20,6 +21,7 @@ import java.io.InputStreamReader;
 public class Main {
     public DatabaseManaging databaseManager;
     public ServerHandler serverHandler;
+    public ChannelManagment channelManagment;
     private CommandParser commandParser;
     ConnectionHandler connectionHandler;
     public PermissionManagment permissionManagment;
@@ -69,7 +71,22 @@ public class Main {
     private void executeCommand(){
         switch (commandParser.getLastExecuted().getCommand()){
             case STOP:
+                try {
+                    connectionHandler.stop();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.exit(0);
+                break;
+            case CCHANEL:
+                try {
+                    channelManagment.createNewChannel(commandParser.getLastExecuted().getArgs()[0], Integer.parseInt(commandParser.getLastExecuted().getArgs()[1]));
+                    System.out.println("Channel created!");
+                } catch (SqlJetException e) {
+                    e.printStackTrace();
+                } catch (NumberFormatException e) {
+                    System.out.println("Use: " + commandParser.getLastExecuted().getCommand().getUsage());
+                }
                 break;
         }
     }
@@ -93,13 +110,17 @@ public class Main {
         before = System.currentTimeMillis();
         connectionHandler = new ConnectionHandler(this, Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)), Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_SLOTS)));
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        before = System.currentTimeMillis();
-        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
         System.out.print("Init server handler.");
+        before = System.currentTimeMillis();
         serverHandler = new ServerHandler(this);
-        System.out.print("Init PermissionManagment");
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
+        System.out.print("Init PermissionManagement");
         before = System.currentTimeMillis();
         permissionManagment = new PermissionManagment(databaseManager);
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
+        System.out.print("Init ChannelManagement");
+        before = System.currentTimeMillis();
+        channelManagment = new ChannelManagment(databaseManager);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
         System.out.print("Starting ConnectionHandler with Server.");
         before = System.currentTimeMillis();
