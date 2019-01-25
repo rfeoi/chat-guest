@@ -1,8 +1,8 @@
 package nspirep2p.application.server.connection;
 
 import nspirep2p.application.server.database.Permission;
-import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.*;
+import nspirep2p.communication.protocol.v1.Package;
 
 import java.io.*;
 import java.net.Socket;
@@ -45,9 +45,8 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
     private void parsePackage(String[] lines) throws WrongPackageFormatException {
         Package parsed = parser.parsePackage(lines);
         Client client = connectionHandler.main.serverHandler.getClientByUUID(parsed.getAuthUUID());
-        if (hasPermission(Permission.CONTROL_OTHER) && client != this){
+        if (client != this && !hasPermission(Permission.CONTROL_OTHER)) {
             client = this;
-        }else{
             connectionHandler.main.serverHandler.sendErrorMessage(this, Permission.CONTROL_OTHER.getNoPermissionError());
         }
         switch (parsed.getFunction()) {
