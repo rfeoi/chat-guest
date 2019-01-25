@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class MainInterface extends JFrame implements AWTEventListener {
     private JFrame frame;
-    private JButton sendButton, changeUsernameButton, enterGroup;
+    private JButton sendButton, changeUsernameButton, enterGroup, clearButton;
     private JLabel messages;
     private JTextField userInput;
     private HashMap<String, JLabel> channel, users;
@@ -109,6 +109,10 @@ public class MainInterface extends JFrame implements AWTEventListener {
         enterGroup.addActionListener(actionListener);
         buttonPanel.add(enterGroup);
 
+        clearButton = new JButton("Clear");
+        clearButton.addActionListener(actionListener);
+        buttonPanel.add(clearButton);
+
         frame.add(buttonPanel, BorderLayout.PAGE_START);
 
     }
@@ -134,7 +138,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
     public void setNewServerMessage(String message) {
         String text = messages.getText();
         text = text.replace("</html>", "");
-        messages.setText(text + message + "</html>");
+        messages.setText(text + "<br>" + message + "</html>");
         frame.setVisible(false);
         frame.setVisible(true);
     }
@@ -156,7 +160,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
     private void changeUsername() {
         String username = "";
         try {
-            while (username.isEmpty() || username.contains(" ")) {
+            while (username.isEmpty() || username.contains(" ") || username.equals("null")) {
                 username = JOptionPane.showInputDialog("Enter your new username.", Main.mainClass.getUsername());
             }
         } catch (NullPointerException e) { return; }
@@ -278,6 +282,13 @@ public class MainInterface extends JFrame implements AWTEventListener {
     }
 
     /**
+     * Removes all messages
+     */
+    private void clearTextField() {
+        messages.setText("");
+    }
+
+    /**
      * Checks if a button is pressed and starts the matching function.
      */
     private ActionListener actionListener = new ActionListener() {
@@ -291,6 +302,8 @@ public class MainInterface extends JFrame implements AWTEventListener {
                 setEnterGroup();
             } else if (button == changeUsernameButton) {
                 changeUsername();
+            } else if (button==clearButton) {
+                clearTextField();
             }
         }
     };
