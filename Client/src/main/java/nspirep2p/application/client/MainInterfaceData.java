@@ -89,6 +89,18 @@ public class MainInterfaceData {
         currentChannel = channelName;
     }
 
+    public void changeChannelName(String oldName, String newName) {
+        int i = 0;
+        for (String aChannel: channel) {
+            if (aChannel.equals(oldName)) {
+                channel.remove(i);
+                channel.add(i, newName);
+                break;
+            }
+            i++;
+        }
+    }
+
     /**
      * Gets the current channel
      * @return returns it

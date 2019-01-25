@@ -129,6 +129,7 @@ public class ConnectionHandler extends Client {
      * @param to the other channel
      */
     public void move(String to) {
+        Main.mainClass.mainInterface.setNewServerMessage("You moved to: " + to);
         sendMessage(parser.moveClient(this, to));
     }
 
@@ -166,23 +167,24 @@ public class ConnectionHandler extends Client {
                 String oldUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]);
                 String newUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]);
                 if (oldUsername.equals("null")) {
-                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + newUsername + "</br> joined");
+                    Main.mainClass.mainInterface.setNewServerMessage("<b>" + newUsername + "</b> joined");
                     Main.mainClass.mainInterfaceData.addUser(newUsername);
                 } else if (newUsername.equals("null")) {
-                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + oldUsername + "</br> left");
+                    Main.mainClass.mainInterface.setNewServerMessage("<b>" + oldUsername + "</b> left");
                     Main.mainClass.mainInterfaceData.removeUser(oldUsername);
                 } else {
                     Main.mainClass.mainInterfaceData.changeUsername(oldUsername, newUsername);
+                    Main.mainClass.mainInterfaceData.changeChannelName(oldUsername, newUsername);
                 }
                 break;
             case MOVE:
                 String username = parsed.getArg(Function.MOVE.getParameters()[0]);
                 String changeChannel = parsed.getArg(Function.MOVE.getParameters()[1]);
                 if (!changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel()) && Main.mainClass.mainInterfaceData.userIsInYourChannel(username)) {
-                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + username + "</br> left");
-                    Main.mainClass.mainInterfaceData.removeUser(username);
+                    Main.mainClass.mainInterface.setNewServerMessage("<b>" + username + "</b> left");
+                    //Main.mainClass.mainInterfaceData.removeUser(username);
                 } else if (changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel())) {
-                    Main.mainClass.mainInterface.setNewServerMessage("<br>" + username + "</br> joined");
+                    Main.mainClass.mainInterface.setNewServerMessage("<b>" + username + "</b> joined");
                     Main.mainClass.mainInterfaceData.addUser(username);
                 }
                 break;
