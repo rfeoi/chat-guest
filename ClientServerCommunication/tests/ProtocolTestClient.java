@@ -115,5 +115,5 @@ public class ProtocolTestClient {
         assertEquals(responsePackage.getArg(Function.ENTER_GROUP.getParameters()[0]),hashed);
 
     }
-    //TODO write test for kick
+    //TODO write test for kick, ping
 }

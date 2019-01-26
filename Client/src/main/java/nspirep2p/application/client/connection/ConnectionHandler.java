@@ -1,7 +1,6 @@
 package nspirep2p.application.client.connection;
 
 import nspirep2p.application.client.Main;
-import nspirep2p.application.client.fileHandling.UserPropetySave;
 import nspirep2p.communication.protocol.Client;
 import nspirep2p.communication.protocol.ClientType;
 import nspirep2p.communication.protocol.v1.CommunicationParser;
@@ -10,7 +9,9 @@ import nspirep2p.communication.protocol.v1.Package;
 import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -255,6 +256,8 @@ public class ConnectionHandler extends Client {
                 JOptionPane.showMessageDialog(null, "You have been kicked! \n" +
                                                                              "Reason: \"" + parsed.getArg(Function.KICK.getParameters()[1]) + "\"");
                 System.exit(0);
+            case PING:
+                sendMessage(parser.ping(this));
             default:
                 for (String line : lines) {
                     System.out.println(line);

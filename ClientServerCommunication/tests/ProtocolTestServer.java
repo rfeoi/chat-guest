@@ -165,6 +165,6 @@ public class ProtocolTestServer {
         assertEquals(cPackage.getArg(Function.GET_CHANNELS.getParameters()[0]),"1,2,3,4,5");
 
     }
-    //TODO write test for kick
+    //TODO write test for kick, ping
 
 }

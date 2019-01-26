@@ -6,11 +6,13 @@ import nspirep2p.communication.protocol.v1.*;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 
 public class Client extends nspirep2p.communication.protocol.Client implements Runnable {
     private String role = "user";
     private String channel = "none";
     private Socket userSocket;
+    private long lastPing;
     private ConnectionHandler connectionHandler;
     private CommunicationParser parser;
     private MultipleLinesReader multipleLinesReader;
@@ -119,6 +121,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 multipleLinesReader.read(reader.readLine());
                 if (multipleLinesReader.isEnd()) {
                     try {
+                        lastPing = new Date().getTime();
                         parsePackage(multipleLinesReader.getLines());
                     } catch (WrongPackageFormatException e) {
                         send(parser.wrongPackageError());
@@ -128,6 +131,11 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
                 connectionHandler.main.serverHandler.quit(this);
+            }
+            if (new Date().getTime() - lastPing > 15000) {
+                connectionHandler.main.serverHandler.quit(this);
+            } else if (new Date().getTime() - lastPing > 10000) {
+                send(connectionHandler.parser.ping(this));
             }
         }
 
