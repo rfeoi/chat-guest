@@ -17,6 +17,7 @@ class UserInterface extends JFrame {
     private JLabel usernameLabel;
     private JLabel ipLabel;
     private JPanel userDetails;
+    private String uuid;
 
     /**
      * sets settings for the JFrame frame
@@ -38,10 +39,11 @@ class UserInterface extends JFrame {
      * @param username the text for the username textField
      * @param IPAddress the text for the IP-Address textField
      */
-    void startWithText(String username, String IPAddress) {
+    void startWithText(String username, String IPAddress, String uuid) {
         start();
         usernameField.setText(username);
         ipField.setText(IPAddress);
+        this.uuid = uuid;
     }
 
     /**
@@ -98,9 +100,10 @@ class UserInterface extends JFrame {
                 makeVisible("You can't use spaces in the IP-Address!");
                 return;
             }
+
             frame.setVisible(false);
             System.out.println("Trying to connect!");
-            boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
+            boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username, uuid);
             if (!hasSucceeded) {
                 makeVisible("Error when connecting to the server!");
                 return;

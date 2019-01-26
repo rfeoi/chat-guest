@@ -24,7 +24,7 @@ public class CommunicationParser {
     }
 
     /**
-     * Handels the handshake beginning for client
+     * Handles the handshake beginning for client
      * <p>
      * After Handshake you should get denied or accepted
      * Only accepts clients
@@ -46,11 +46,15 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     * Generates a new uuid
+     * @return the uuid as a String
+     */
     private String generateNewUUID() {
         long timestamp = new Date().getTime();
-        long random = new Random().nextLong();
-        long randomFaktor = Runtime.getRuntime().totalMemory();
-        return timestamp + "" + (random * (randomFaktor / 10000));
+        long random = Math.abs(new Random().nextLong());
+        long randomFactor = Runtime.getRuntime().totalMemory();
+        return "0" + timestamp + "" + (random * (randomFactor / 10000));
     }
 
     /**
@@ -324,7 +328,7 @@ public class CommunicationParser {
      *
      * @param client   the client which requested
      * @param clients all clients (null on client)
-     * @param sendUUID if uuids should be send too (false on client)
+     * @param sendUUID if uuid's should be send too (false on client)
      * @return push
      */
     public String[] getClients(Client client, Client[] clients, boolean sendUUID) {
