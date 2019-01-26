@@ -1,6 +1,8 @@
 package nspirep2p.application.server;
 
+import nspirep2p.application.server.commandParser.Command;
 import nspirep2p.application.server.commandParser.CommandParser;
+import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.ChannelManagment;
 import nspirep2p.application.server.database.DatabaseManaging;
@@ -52,7 +54,11 @@ public class Main {
                 if (line != null){
                     commandParser.insertManually(line);
                     if (commandParser.wasLastCorrect()){
-                        executeCommand();
+                        try {
+                            executeCommand();
+                        } catch (Exception e) {
+                            System.out.println("Something went wrong");
+                        }
                     }else{
                         if (commandParser.getLastExecuted().getError().equals("TOOLESSPARAMETER")){
                             System.out.println("Wrong command");
@@ -86,6 +92,43 @@ public class Main {
                     e.printStackTrace();
                 } catch (NumberFormatException e) {
                     System.out.println("Use: " + commandParser.getLastExecuted().getCommand().getUsage());
+                }
+                break;
+            case LISTCLIENTS:
+                for (Client client : connectionHandler.getClients()) {
+                    System.out.println(client.username + "   " + client.uuid);
+                }
+                break;
+            case KICK:
+                String reason = "Kicked by an admin";
+                if (commandParser.getLastExecuted().getArgs().length == 2) {
+                    reason = commandParser.getLastExecuted().getArgs()[1].replace("_", " ");
+                }
+                Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
+                if (client != null) {
+                    System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
+                    serverHandler.forceKick(client, reason);
+                } else
+                    System.err.println("Could not find user with uuid " + commandParser.getLastExecuted().getArgs()[0]);
+                break;
+            case HELP:
+                if (commandParser.getLastExecuted().getArgs() == null) {
+                    for (Command command : Command.values()) {
+                        if (command.getHelp() != null) {
+                            System.out.println(command.getHelp());
+                        }
+                    }
+                } else {
+                    try {
+                        Command helpWanted = Command.valueOf(commandParser.getLastExecuted().getArgs()[0].toUpperCase());
+                        if (helpWanted.getHelp() != null) {
+                            System.out.println(helpWanted.getHelp());
+                        } else {
+                            System.out.println(helpWanted.getParent().getHelp());
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Command " + commandParser.getLastExecuted().getArgs()[0] + " does not exists!");
+                    }
                 }
                 break;
         }

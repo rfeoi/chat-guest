@@ -98,7 +98,7 @@ public class ServerHandler {
      * @param toBeKicked the user who gets kicked
      * @param reason     the reason why
      */
-    private void forceKick(Client toBeKicked, String reason) {
+    public void forceKick(Client toBeKicked, String reason) {
         if (toBeKicked != null) {
             toBeKicked.send(connectionHandler.parser.kick(null, null, reason));
             quit(toBeKicked);

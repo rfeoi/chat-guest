@@ -260,7 +260,7 @@ public class CommunicationParser {
             return push;
         } else if (clientType == ClientType.SERVER) {
             String[] push = new String[3];
-            push[0] = "function=SEND_MESSAGE";
+            push[0] = "function=KICK";
             push[1] = "reason=" + reason;
             push[2] = END_BREAK;
             return push;

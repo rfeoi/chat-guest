@@ -100,7 +100,12 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 connectionHandler.main.serverHandler.quit(this);
                 return;
             }
-            connectionHandler.clients.add(this);
+            if (connectionHandler.main.serverHandler.getClientByUUID(uuid) == null) {
+                connectionHandler.clients.add(this);
+            } else {
+                connectionHandler.main.serverHandler.sendMessage(this, "Sorry UUID is already taken. Please reconnect with an other uuid!");
+                return;
+            }
         } catch (IOException e) {
             System.err.println("Exception while handeling client handshake");
             e.printStackTrace();
