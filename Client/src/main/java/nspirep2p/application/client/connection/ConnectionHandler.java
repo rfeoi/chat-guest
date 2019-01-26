@@ -88,7 +88,6 @@ public class ConnectionHandler extends Client {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(this.uuid);
             Main.mainClass.userPropetySave.generateConfigFile("" + ip + ":" + port, this.username, this.uuid);
 
 

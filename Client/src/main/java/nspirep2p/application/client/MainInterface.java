@@ -26,7 +26,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
     /**
      * Initializes the frame
      */
-    void start() {
+    void start(String ipAddress, String username, String uuid) {
         frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setSize(1000,500);
@@ -34,8 +34,17 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         setPanel();
+        startConnection(ipAddress, username, uuid);
     }
 
+
+    private void startConnection(String ipAddress, String username, String uuid) {
+        System.out.println("Trying to connect!");
+        boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username, uuid);
+        if (!hasSucceeded) {
+            Main.mainClass.userInterface.makeVisible("Error when connecting to the server!");
+        }
+    }
     /**
      * Starts the initialization process of the panels.
      */
@@ -136,9 +145,16 @@ public class MainInterface extends JFrame implements AWTEventListener {
      * @param message the message.
      */
     public void setNewServerMessage(String message) {
-        String text = messages.getText();
+        String text = "";
+        if (messages != null ) {
+            if (messages.getText() != null) {
+                text = messages.getText();
+            }
+        }
         text = text.replace("</html>", "");
-        messages.setText(text + "<br>" + message + "</html>");
+        if (messages != null) {
+            messages.setText(text + "<br>" + message + "</html>");
+        }
         frame.setVisible(false);
         frame.setVisible(true);
     }

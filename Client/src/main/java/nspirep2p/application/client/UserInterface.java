@@ -77,7 +77,7 @@ class UserInterface extends JFrame {
      * makes the frame visible
      * @param message the title of the screen
      */
-    private void makeVisible(String message) {
+    void makeVisible(String message) {
         frame.setTitle(message);
         frame.setVisible(true);
     }
@@ -102,13 +102,7 @@ class UserInterface extends JFrame {
             }
 
             frame.setVisible(false);
-            System.out.println("Trying to connect!");
-            boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username, uuid);
-            if (!hasSucceeded) {
-                makeVisible("Error when connecting to the server!");
-                return;
-            }
-            Main.mainClass.mainInterface.start();
+            Main.mainClass.mainInterface.start(ipAddress, username, uuid);
         }
     };
 }
