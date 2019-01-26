@@ -104,6 +104,7 @@ public class Main {
                 if (commandParser.getLastExecuted().getArgs().length == 2) {
                     reason = commandParser.getLastExecuted().getArgs()[1].replace("_", " ");
                 }
+            {
                 Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
                 if (client != null) {
                     System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
@@ -111,6 +112,7 @@ public class Main {
                 } else
                     System.err.println("Could not find user with uuid " + commandParser.getLastExecuted().getArgs()[0]);
                 break;
+            }
             case HELP:
                 if (commandParser.getLastExecuted().getArgs() == null) {
                     for (Command command : Command.values()) {
@@ -129,6 +131,16 @@ public class Main {
                     } catch (IllegalArgumentException e) {
                         System.out.println("Command " + commandParser.getLastExecuted().getArgs()[0] + " does not exists!");
                     }
+                }
+                break;
+            case KICKALL:
+                String reason_kickall = "All have been kicked!";
+                if (commandParser.getLastExecuted().getArgs() != null) {
+                    reason_kickall = commandParser.getLastExecuted().getArgs()[0].replace("_", " ");
+                }
+                for (Client client : connectionHandler.getClients()) {
+                    serverHandler.forceKick(client, reason_kickall);
+                    System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
                 }
                 break;
         }

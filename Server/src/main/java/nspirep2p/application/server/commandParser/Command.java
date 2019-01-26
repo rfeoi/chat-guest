@@ -11,6 +11,7 @@ public enum Command {
     CCHANEL(2, 2, "cchanel <name> <level>", "Creates a new channel (needs an manual server restart afterwards)"),
     LISTCLIENTS(0, 0, "listclients", "Gives back a list of clients"),
     KICK(1, 2, "kick <uuid> (<reason>)", "Kicks a client"),
+    KICKALL(0, 1, "kickall (<reason>)", "Kicks all clients"),
 
     //Aliases
     CLOSE(STOP, 0, 0),

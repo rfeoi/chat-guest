@@ -34,6 +34,8 @@ public class TestCommands {
         assertEquals(0, Command.LISTCLIENTS.getMaxParameter());
         assertEquals(0, Command.LIST.getMinParameter());
         assertEquals(0, Command.LIST.getMaxParameter());
+        assertEquals(0, Command.KICKALL.getMinParameter());
+        assertEquals(1, Command.KICKALL.getMaxParameter());
     }
 
     /**
@@ -50,6 +52,7 @@ public class TestCommands {
         assertNull(Command.LISTCLIENTS.getParent());
         assertNull(Command.HELP.getParent());
         assertNull(Command.KICK.getParent());
+        assertNull(Command.KICKALL.getParent());
     }
 
 }
