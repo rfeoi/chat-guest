@@ -12,11 +12,13 @@ public enum Command {
     LISTCLIENTS(0, 0, "listclients", "Gives back a list of clients"),
     KICK(1, 2, "kick <uuid> (<reason>)", "Kicks a client"),
     KICKALL(0, 1, "kickall (<reason>)", "Kicks all clients"),
+    CHANGEUSERNAME(2, 2, "changeUsername <uuid> <newUsername>", "Changes the Name of an client"),
 
     //Aliases
     CLOSE(STOP, 0, 0),
     EXIT(STOP, 0, 0),
     BREAK(STOP, 0, 0),
+    USERNAME(CHANGEUSERNAME, 2, 2),
     LIST(LISTCLIENTS, 0, 0);
 
     Command parent;

@@ -112,7 +112,7 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
             connectionHandler.main.serverHandler.quit(this);
         }
         multipleLinesReader.clear();
-        System.out.println("New Client connected! (From " + userSocket.getInetAddress().getHostAddress() + ")");
+        System.out.println("New Client connected with UUID " + uuid + "! (From " + userSocket.getInetAddress().getHostAddress() + ")");
         //Do normal package parsing
         while (userSocket.isConnected() && connectionHandler.clients.contains(this)) {
             try {

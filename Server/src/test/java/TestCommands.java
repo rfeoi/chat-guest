@@ -36,6 +36,10 @@ public class TestCommands {
         assertEquals(0, Command.LIST.getMaxParameter());
         assertEquals(0, Command.KICKALL.getMinParameter());
         assertEquals(1, Command.KICKALL.getMaxParameter());
+        assertEquals(2, Command.CHANGEUSERNAME.getMinParameter());
+        assertEquals(2, Command.CHANGEUSERNAME.getMaxParameter());
+        assertEquals(2, Command.USERNAME.getMinParameter());
+        assertEquals(2, Command.USERNAME.getMaxParameter());
     }
 
     /**
@@ -47,12 +51,14 @@ public class TestCommands {
         assertEquals(Command.STOP, Command.CLOSE.getParent());
         assertEquals(Command.STOP, Command.EXIT.getParent());
         assertEquals(Command.LISTCLIENTS, Command.LIST.getParent());
+        assertEquals(Command.CHANGEUSERNAME, Command.USERNAME.getParent());
         assertNull(Command.STOP.getParent());
         assertNull(Command.CCHANEL.getParent());
         assertNull(Command.LISTCLIENTS.getParent());
         assertNull(Command.HELP.getParent());
         assertNull(Command.KICK.getParent());
         assertNull(Command.KICKALL.getParent());
+        assertNull(Command.USERNAME.getParent());
     }
 
 }

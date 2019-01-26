@@ -143,6 +143,15 @@ public class Main {
                     System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
                 }
                 break;
+            case CHANGEUSERNAME: {
+                Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
+                if (client != null) {
+                    System.out.println("Changing username from " + client.username + " to " + commandParser.getLastExecuted().getArgs()[1]);
+                    serverHandler.pushUsernameToClients(client, commandParser.getLastExecuted().getArgs()[1]);
+                } else {
+                    System.out.println("User not found!");
+                }
+            }
         }
     }
 
