@@ -14,7 +14,7 @@ import java.util.Random;
  * Created by strifel on 07.11.2018.
  */
 public class CommunicationParser {
-    private static final String PROTOCOL_VERSION = "1.1";
+    private static final String PROTOCOL_VERSION = "1.2";
     static final String END_WAIT = "waiting";
     static final String END_BREAK = "break";
     private ClientType clientType;
@@ -85,6 +85,29 @@ public class CommunicationParser {
         response[1] = END_BREAK;
         return response;
     }
+
+    /**
+     * Sends / replies to pong
+     *
+     * @param client to get auth uuid
+     * @return push to server/client
+     */
+    public String[] ping(Client client) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[3];
+            push[0] = "function=PING";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = END_BREAK;
+            return push;
+        } else if (clientType == ClientType.SERVER) {
+            String[] push = new String[2];
+            push[0] = "function=PING";
+            push[1] = END_WAIT;
+            return push;
+        }
+        return null;
+    }
+
 
     public String[] wrongPackageError(){
         return new String[]{"error=package_wrong", END_BREAK};
