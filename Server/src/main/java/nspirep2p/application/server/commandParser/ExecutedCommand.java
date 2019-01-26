@@ -25,6 +25,7 @@ public class ExecutedCommand {
             System.arraycopy(splitCommand, 1, args, 0, splitCommand.length - 1);
             if (command.minParameter > args.length || command.maxParameter < args.length){
                 error = "TOOLESSPARAMETER";
+                correctCommand = false;
             }
         } else {
             try {
