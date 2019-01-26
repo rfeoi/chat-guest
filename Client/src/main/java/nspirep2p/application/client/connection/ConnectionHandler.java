@@ -81,6 +81,11 @@ public class ConnectionHandler extends Client {
             Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
             sendMessage(parser.doHandshake(this));
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             this.username = username;
             System.out.println(username);
