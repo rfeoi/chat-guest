@@ -101,7 +101,10 @@ class UserInterface extends JFrame {
             frame.setVisible(false);
             System.out.println("Trying to connect!");
             boolean hasSucceeded = Main.mainClass.connectionHandler.connect(ipAddress, username);
-            if (!hasSucceeded) { makeVisible("Error when connecting to the server!"); }
+            if (!hasSucceeded) {
+                makeVisible("Error when connecting to the server!");
+                return;
+            }
             Main.mainClass.mainInterface.start();
         }
     };

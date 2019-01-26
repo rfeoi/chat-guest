@@ -11,7 +11,9 @@ import nspirep2p.communication.protocol.v1.WrongPackageFormatException;
 
 import javax.swing.*;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by robmroi03 on 12.11.2018.
@@ -90,8 +92,17 @@ public class ConnectionHandler extends Client {
 
             Thread thread = new Thread(new ServerParser(socket));
             thread.start();
+        } catch (ConnectException e) {
+            //e.printStackTrace();
+            System.out.println("ConnectException");
+            return false;
+        } catch (UnknownHostException e) {
+            System.out.println("UnknownHostException");
+            //e.printStackTrace();
+            return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("IOException");
+            //e.printStackTrace();
             return false;
         }
         return true;
@@ -156,6 +167,17 @@ public class ConnectionHandler extends Client {
     }
 
     /**
+     * Sends a message to the server to kick a specific user
+     * @param user the user that should be kicked
+     * @param reason the reason why the user should be kicked
+     */
+    public void kickUser(String user, String reason) {
+        Client client = new Client();
+        client.username = user;
+        sendMessage(parser.kick(this, client, reason));
+    }
+
+    /**
      * Parses the package which the client receives from the server.
      * @param lines the package in an array.
      * @throws WrongPackageFormatException if the package does not conform to the typical package.
@@ -166,7 +188,7 @@ public class ConnectionHandler extends Client {
             case CHANGE_USERNAME:
                 String oldUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[0]);
                 String newUsername = parsed.getArg(Function.CHANGE_USERNAME.getParameters()[1]);
-                if (oldUsername.equals("null")) {
+                if (oldUsername.equals("null") && !newUsername.equals("null")) {
                     Main.mainClass.mainInterface.setNewServerMessage("<b>" + newUsername + "</b> joined");
                     Main.mainClass.mainInterfaceData.addUser(newUsername);
                 } else if (newUsername.equals("null")) {
@@ -184,6 +206,7 @@ public class ConnectionHandler extends Client {
                     Main.mainClass.mainInterface.setNewServerMessage("<b>" + username + "</b> left");
                     //Main.mainClass.mainInterfaceData.removeUser(username);
                 } else if (changeChannel.equals(Main.mainClass.mainInterfaceData.getCurrentChannel())) {
+                    if (username.equals("null")) return;
                     Main.mainClass.mainInterface.setNewServerMessage("<b>" + username + "</b> joined");
                     Main.mainClass.mainInterfaceData.addUser(username);
                 }
@@ -221,6 +244,10 @@ public class ConnectionHandler extends Client {
             case SEND_MESSAGE:
                 Main.mainClass.mainInterface.setNewMessage(parsed.getArg(Function.SEND_MESSAGE.getParameters()[2]),Main.mainClass.getTime(),parsed.getArg(Function.SEND_MESSAGE.getParameters()[1]));
                 break;
+            case KICK:
+                JOptionPane.showMessageDialog(null, "You have been kicked! \n" +
+                                                                             "Reason: \"" + parsed.getArg(Function.KICK.getParameters()[1]) + "\"");
+                System.exit(0);
             default:
                 for (String line : lines) {
                     System.out.println(line);

@@ -173,6 +173,16 @@ public class MainInterface extends JFrame implements AWTEventListener {
     }
 
     /**
+     * It prepares for kicking a user
+     * @param username the user which should be kicked
+     */
+    private void kickUser(String username) {
+        String reason = JOptionPane.showInputDialog("Why do you want to kick \"" + username + "\"?");
+        if (reason == null || reason.isEmpty()) return;
+        Main.mainClass.connectionHandler.kickUser(username, reason);
+    }
+
+    /**
      * Redraws the channel- and user-panel.
      */
     private void redraw(){
@@ -224,9 +234,13 @@ public class MainInterface extends JFrame implements AWTEventListener {
                 userLabel.addMouseListener(new MouseListener() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        Main.mainClass.connectionHandler.invite(username, Main.mainClass.mainInterfaceData.getHasCreatedTempChannel());
-                        if (Main.mainClass.mainInterfaceData.getHasCreatedTempChannel()) {
-                            Main.mainClass.mainInterfaceData.setHasCreatedTempChannel();
+                        if (SwingUtilities.isRightMouseButton(e)) {
+                            kickUser(username);
+                        } else if (SwingUtilities.isLeftMouseButton(e)) {
+                            Main.mainClass.connectionHandler.invite(username, Main.mainClass.mainInterfaceData.getHasCreatedTempChannel());
+                            if (Main.mainClass.mainInterfaceData.getHasCreatedTempChannel()) {
+                                Main.mainClass.mainInterfaceData.setHasCreatedTempChannel();
+                            }
                         }
                     }
                     @Override
@@ -285,7 +299,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
      * Removes all messages
      */
     private void clearTextField() {
-        messages.setText("");
+        messages.setText("<html>");
     }
 
     /**
