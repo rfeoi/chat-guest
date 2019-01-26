@@ -165,7 +165,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
             }
         } catch (NullPointerException e) { return; }
         try {
-            Main.mainClass.userPropetySave.generateConfigFile(Main.mainClass.getIP(), username);
+            Main.mainClass.userPropetySave.generateConfigFile(Main.mainClass.getIP(), username, Main.mainClass.getUUID());
         } catch (IOException e) {
             e.printStackTrace();
         }

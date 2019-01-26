@@ -24,7 +24,7 @@ public class Main {
     public CommunicationParser communicationParser;
 
     public static Main mainClass;
-    private String username, ip;
+    private String username, ip,  uuid;
 
     public static void main(String[] args){
         mainClass = new Main();
@@ -51,9 +51,10 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            userInterface.startWithText(properties[1], properties[0]);
+            userInterface.startWithText(properties[1], properties[0], properties[2]);
             username = properties[1];
             ip = properties[0];
+            uuid = properties[2];
         } else {
             userInterface.start();
         }
@@ -83,5 +84,13 @@ public class Main {
      */
     String getIP() {
         return ip;
+    }
+
+    /**
+     * Gets the uuid
+     * @return Returns the uuid
+     */
+    String getUUID() {
+        return uuid;
     }
 }
