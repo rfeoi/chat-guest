@@ -17,7 +17,8 @@ public enum Function {
     GET_CHANNELS(new String[]{"channels"}),
     SEND_ERROR(new String[]{"error"}),
     ENTER_GROUP(new String[]{"hashed"}),
-    KICK(new String[]{"username", "reason"});
+    KICK(new String[]{"username", "reason"}),
+    PING(new String[]{});
 
 
     String[] parameters;
