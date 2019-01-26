@@ -33,16 +33,15 @@ public class ConnectionHandler extends Client {
      * @param username username
      * @return if the connection has succeeded
      */
-    public boolean connect(String ip, String username){
-        UserPropetySave userPropetySave = Main.mainClass.userPropetySave;
+    public boolean connect(String ip, String username, String uuid){
         try {
-            userPropetySave.generateConfigFile(ip, username);
+            Main.mainClass.userPropetySave.generateConfigFile(ip, username, uuid);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
 
-        return connectToServer(getIP(ip), getPort(ip), username);
+        return connectToServer(getIP(ip), username, uuid, getPort(ip));
     }
 
     /**
@@ -76,19 +75,22 @@ public class ConnectionHandler extends Client {
      * @param username username of the user
      * @return if the connection has succeeded
      */
-    private boolean connectToServer(String ip, int port, String username) {
+    private boolean connectToServer(String ip, String username, String uuid, int port) {
         try {
             Socket socket = new Socket(ip, port);
             writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.username = username;
+            this.uuid = uuid;
             sendMessage(parser.doHandshake(this));
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.out.println(this.uuid);
+            Main.mainClass.userPropetySave.generateConfigFile("" + ip + ":" + port, this.username, this.uuid);
 
-            this.username = username;
-            System.out.println(username);
+
             sendMessage(parser.pushUsername(this, username));
 
             sendMessage(parser.getChannels(this, null));
