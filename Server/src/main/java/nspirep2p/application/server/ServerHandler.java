@@ -237,11 +237,13 @@ public class ServerHandler {
      * @param client which quits
      */
     public void quit(Client client) {
-        System.out.println("The client " + client.username + " left.");
-        connectionHandler.clients.remove(client);
+        if (connectionHandler.getClients().contains(client)) {
+            System.out.println("The client " + client.username + " left.");
+            connectionHandler.clients.remove(client);
+            deletePrivateChannel(client);
+            connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, "null"));
+        }
         connectionHandler.deleteThread(client);
-        deletePrivateChannel(client);
-        connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, "null"));
     }
 
     /**

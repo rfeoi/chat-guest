@@ -485,7 +485,6 @@ public class CommunicationParser {
         Package clientPackage = new Package(Function.valueOf(clientIncoming[0].split("=")[1]));
         if (clientPackage == null)
             throw new WrongPackageFormatException(clientIncoming[0], "Function requested not found!");
-        clientPackage.authenticateUser(clientIncoming[1].split("=")[1]);
         if(clientIncoming.length > 2) {
             for (int i = 1; i < clientIncoming.length - 1; i++) {
                 if (!clientIncoming[i].contains("="))
