@@ -256,8 +256,10 @@ public class ConnectionHandler extends Client {
                 JOptionPane.showMessageDialog(null, "You have been kicked! \n" +
                                                                              "Reason: \"" + parsed.getArg(Function.KICK.getParameters()[1]) + "\"");
                 System.exit(0);
+                break;
             case PING:
                 sendMessage(parser.ping(this));
+                break;
             default:
                 for (String line : lines) {
                     System.out.println(line);
