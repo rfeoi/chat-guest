@@ -6,6 +6,7 @@ import nspirep2p.communication.protocol.ClientType;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Random;
  * Created by strifel on 07.11.2018.
  */
 public class CommunicationParser {
-    private static final String PROTOCOL_VERSION = "1.0";
+    private static final String PROTOCOL_VERSION = "1.1";
     static final String END_WAIT = "waiting";
     static final String END_BREAK = "break";
     private ClientType clientType;
@@ -33,14 +34,23 @@ public class CommunicationParser {
     public String[] doHandshake(Client client) {
         String[] handshake;
         if (clientType == ClientType.CLIENT) {
-            client.uuid = new Random().nextInt(Integer.MAX_VALUE) + "";
+            if (client.uuid == null) {
+                client.uuid = generateNewUUID();
+            }
             handshake = new String[3];
-            handshake[0] = "client.nspirep2p.version=" + PROTOCOL_VERSION;
-            handshake[1] = "client.nspirep2p.uuid=" + client.uuid;
+            handshake[0] = "client.chatguest.version=" + PROTOCOL_VERSION;
+            handshake[1] = "client.chatguest.uuid=" + client.uuid;
             handshake[2] = END_WAIT;
             return handshake;
         }
         return null;
+    }
+
+    private String generateNewUUID() {
+        long timestamp = new Date().getTime();
+        long random = new Random().nextLong();
+        long randomFaktor = Runtime.getRuntime().totalMemory();
+        return timestamp + "" + (random * (randomFaktor / 10000));
     }
 
     /**
@@ -55,7 +65,7 @@ public class CommunicationParser {
     public String[] parseClientHandshake(String[] handshake, Client newClient) {
         if (handshake.length == 3) {
             if (handshake[0].contains("=") && handshake[1].contains("=") && !handshake[2].contains("=")) {
-                if (handshake[0].startsWith("client.nspirep2p.version=") && handshake[1].startsWith("client.nspirep2p.uuid=") && handshake[2].equals("waiting")) {
+                if (handshake[0].startsWith("client.chatguest.version=") && handshake[1].startsWith("client.chatguest.uuid=") && handshake[2].equals("waiting")) {
                     if (handshake[0].split("=")[1].equals(PROTOCOL_VERSION)) {
                         newClient.uuid = handshake[1].split("=")[1];
                         String[] response = new String[2];
