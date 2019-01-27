@@ -244,6 +244,9 @@ public class ConnectionHandler extends Client {
                 break;
             case GET_CHANNELS:
                 String[] channelList = parsed.getArg(Function.GET_CHANNELS.getParameters()[0]).split(",");
+                for (String channel : Main.mainClass.mainInterfaceData.getChannel()) {
+                    Main.mainClass.mainInterfaceData.removeChannel(channel);
+                }
                 for (String channel : channelList) {
                     Main.mainClass.mainInterfaceData.addChannel(channel);
                 }

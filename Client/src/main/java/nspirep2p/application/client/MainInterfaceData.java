@@ -77,7 +77,7 @@ public class MainInterfaceData {
      * Gets the arrayList as an array
      * @return Returns it
      */
-    String[] getChannel() {
+    public String[] getChannel() {
         return channel.toArray(new String[0]);
     }
 

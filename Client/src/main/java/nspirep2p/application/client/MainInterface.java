@@ -14,7 +14,8 @@ public class MainInterface extends JFrame implements AWTEventListener {
     private JLabel messages;
     private JTextField userInput;
     private HashMap<String, JLabel> channel, users;
-    private JPanel channelPanel, userPanel;
+    private JPanel channelPanel, userPanel, chatPanel;
+
 
     MainInterface() {
         //detects if a key is pressed
@@ -60,13 +61,12 @@ public class MainInterface extends JFrame implements AWTEventListener {
      * Sets the content of the chat-panel.
      */
     private void setChatPanel() {
-        JPanel chatPanel = new JPanel(new BorderLayout());
+        chatPanel = new JPanel(new BorderLayout());
 
         messages = new JLabel();
         messages.setText("<html>Session started!</html>");
         //messages.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(messages);
-
         userInput = new JTextField();
         sendButton = new JButton("Send!");
         sendButton.addActionListener(actionListener);
@@ -201,19 +201,17 @@ public class MainInterface extends JFrame implements AWTEventListener {
     /**
      * Redraws the channel- and user-panel.
      */
+    @SuppressWarnings("Duplicates")
     private void redraw(){
-        if (channelPanel != null ){
-            if (channelPanel.getComponents() != null){
-                for (Component component : channelPanel.getComponents()){
-                    channelPanel.remove(component);
-                }
-            }
+        if (channelPanel != null) {
+            channelPanel.removeAll(); //TODO Class cast exception is not thrown if this statement is not executed
             channelPanel.add(new JLabel("Channel: "));
-            for (JLabel label : channel.values()){
+            for (JLabel label : channel.values()) {
                 channelPanel.add(label);
                 label.setVisible(true);
             }
-        }
+            channelPanel.updateUI();
+            }
 
 
 
@@ -228,9 +226,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
                 userPanel.add(label);
                 label.setVisible(true);
             }
+            userPanel.updateUI();
         }
-        frame.setVisible(false);
-        frame.setVisible(true);
+
     }
 
     /**
