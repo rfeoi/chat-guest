@@ -58,6 +58,15 @@ public class MainInterfaceData {
     }
 
     /**
+     * Removes all users
+     */
+    public void removeAllUsers() {
+        for (int i = 0; i<users.size(); i++) {
+            users.remove(i);
+        }
+    }
+
+    /**
      * Adds a channel to the arrayList
      * @param channelName the name of the channel
      */
@@ -77,8 +86,14 @@ public class MainInterfaceData {
      * Gets the arrayList as an array
      * @return Returns it
      */
-    public String[] getChannel() {
+    String[] getChannel() {
         return channel.toArray(new String[0]);
+    }
+
+    public void removeAllChannel() {
+        for (int i=0; i<channel.size(); i++) {
+            channel.remove(i);
+        }
     }
 
     /**
