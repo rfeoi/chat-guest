@@ -69,7 +69,7 @@ public class CommunicationParser {
     public String[] parseClientHandshake(String[] handshake, Client newClient) {
         if (handshake.length == 3) {
             if (handshake[0].contains("=") && handshake[1].contains("=") && !handshake[2].contains("=")) {
-                if (handshake[0].startsWith("client.chatguest.version=") && handshake[1].startsWith("client.chatguest.uuid=") && handshake[2].equals("waiting")) {
+                if (handshake[0].startsWith("client.chatguest.version=") && handshake[1].startsWith("client.chatguest.uuid=") && handshake[2].equals("waiting") && !handshake[1].contains(" ")) {
                     if (handshake[0].split("=")[1].equals(PROTOCOL_VERSION)) {
                         newClient.uuid = handshake[1].split("=")[1];
                         String[] response = new String[2];
