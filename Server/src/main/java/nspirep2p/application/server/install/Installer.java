@@ -27,6 +27,7 @@ public class Installer {
         setupOptions.put("slots:10", "How many slots do you wish?");
         setupOptions.put("generateChannel:1", "How many default channel would you like to generate?");
         setupOptions.put("adminPW:admin", "Which key do you want to have as an Admin Key (PLEASE DO NOT USE STANDARD KEY!)?");
+        setupOptions.put("timeout:10000", "The time when a client should be kicked if he has not answered ping after x ms");
     }
 
     /**
@@ -75,6 +76,7 @@ public class Installer {
             Main.mainClass.databaseManager.createTables();
             Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_PORT, choosenOptions.get("port"));
             Main.mainClass.databaseManager.insertSetting(ServerSetting.SERVER_SLOTS, choosenOptions.get("slots"));
+            Main.mainClass.databaseManager.insertSetting(ServerSetting.TIMEOUT_TIME_SINCE_REQUEST, choosenOptions.get("timeout"));
         } catch (SqlJetException e) {
             e.printStackTrace();
         }

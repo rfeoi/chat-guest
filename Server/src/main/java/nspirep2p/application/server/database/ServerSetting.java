@@ -6,5 +6,6 @@ package nspirep2p.application.server.database;
  */
 public enum ServerSetting {
     SERVER_PORT,
-    SERVER_SLOTS
+    SERVER_SLOTS,
+    TIMEOUT_TIME_SINCE_REQUEST
 }

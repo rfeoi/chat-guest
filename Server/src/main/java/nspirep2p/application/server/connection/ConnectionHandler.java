@@ -22,6 +22,7 @@ public class ConnectionHandler {
     public CommunicationParser parser;
     int maxUser;
     private Thread acceptThread;
+    private Thread timeoutThread;
     boolean serverRun = false;
 
     public ConnectionHandler(Main main, int port, int maxUser) throws IOException {
@@ -41,14 +42,15 @@ public class ConnectionHandler {
         serverRun = true;
         acceptThread = new Thread(new AcceptRunnable(serverSocket, this));
         acceptThread.start();
+        timeoutThread = new Thread(new TimeoutRunnable(this));
+        timeoutThread.start();
     }
 
     /**
      * Stops server
      */
-    @SuppressWarnings("unused")
     public void stop() throws IOException {
-        //TODO tell user that server stopped
+        broadcast(parser.sendError("Server closed!"));
         serverRun = false;
         serverSocket.close();
     }
