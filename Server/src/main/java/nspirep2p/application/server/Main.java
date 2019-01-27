@@ -4,16 +4,14 @@ import nspirep2p.application.server.commandParser.Command;
 import nspirep2p.application.server.commandParser.CommandParser;
 import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
-import nspirep2p.application.server.database.ChannelManagment;
-import nspirep2p.application.server.database.DatabaseManaging;
-import nspirep2p.application.server.database.PermissionManagment;
-import nspirep2p.application.server.database.ServerSetting;
+import nspirep2p.application.server.database.*;
 import nspirep2p.application.server.install.Installer;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 
 /**
  * Main server class.
@@ -28,6 +26,7 @@ public class Main {
     ConnectionHandler connectionHandler;
     public PermissionManagment permissionManagment;
     public static Main mainClass;
+    public BanManagment banManagment;
 
     public static void main(String[] args) {
         System.out.println("Welcome to Chat-guest Server application!");
@@ -48,7 +47,7 @@ public class Main {
     @SuppressWarnings("InfiniteLoopStatement")
     private void commandParsing(){
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        while (true){
+        while (connectionHandler.getServerRun()) {
             try {
                 String line = reader.readLine();
                 if (line != null){
@@ -57,6 +56,7 @@ public class Main {
                         try {
                             executeCommand();
                         } catch (Exception e) {
+                            e.printStackTrace();
                             System.out.println("Something went wrong");
                         }
                     }else{
@@ -178,6 +178,66 @@ public class Main {
                     e.printStackTrace();
                 }
                 break;
+            case SHOWUSERNAME: {
+                Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
+                if (client != null) {
+                    System.out.println("The username of the client is: " + client.username);
+                } else {
+                    System.out.println("The client was not found!");
+                }
+            }
+            break;
+            case SHOWUUID: {
+                Client client = serverHandler.getClientByUsername(commandParser.getLastExecuted().getArgs()[0]);
+                if (client != null) {
+                    System.out.println("The uuid of the client is: " + client.uuid);
+                } else {
+                    System.out.println("The client was not found!");
+                }
+            }
+            break;
+            case BAN: {
+                Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
+                if (client != null) {
+                    long duration = 0;
+                    if (commandParser.getLastExecuted().getArgs().length == 2) {
+                        duration = Long.parseLong(commandParser.getLastExecuted().getArgs()[1]);
+                    }
+                    serverHandler.forceBan(client, duration);
+                } else {
+                    System.out.println("Client not found!");
+                }
+            }
+            break;
+            case UNBAN:
+                serverHandler.forceUnban(commandParser.getLastExecuted().getArgs()[0]);
+                break;
+            case ADDPERM: {
+                try {
+                    Permission permission = Permission.valueOf(commandParser.getLastExecuted().getArgs()[1]);
+                    permissionManagment.addPermission(commandParser.getLastExecuted().getArgs()[0], permission);
+                    permissionManagment.reLoadDatabase();
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Permission not found");
+                } catch (SqlJetException e) {
+                    e.printStackTrace();
+                }
+            }
+            break;
+            case REMOVEPERM: {
+                try {
+                    Permission permission = Permission.valueOf(commandParser.getLastExecuted().getArgs()[1]);
+                    permissionManagment.removePermission(commandParser.getLastExecuted().getArgs()[0], permission);
+                    permissionManagment.reLoadDatabase();
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Permission not found");
+                } catch (SqlJetException e) {
+                    e.printStackTrace();
+                }
+            }
+            break;
+
+
         }
     }
 
@@ -211,6 +271,10 @@ public class Main {
         System.out.print("Init ChannelManagement");
         before = System.currentTimeMillis();
         channelManagment = new ChannelManagment(databaseManager);
+        System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
+        System.out.print("Init BanManagment");
+        before = System.currentTimeMillis();
+        banManagment = new BanManagment(databaseManager);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
         System.out.print("Starting ConnectionHandler with Server.");
         before = System.currentTimeMillis();

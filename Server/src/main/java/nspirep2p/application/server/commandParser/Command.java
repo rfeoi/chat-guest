@@ -13,8 +13,14 @@ public enum Command {
     KICK(1, 2, "kick <uuid> (<reason>)", "Kicks a client"),
     KICKALL(0, 1, "kickall (<reason>)", "Kicks all clients"),
     CHANGEUSERNAME(2, 2, "changeUsername <uuid> <newUsername>", "Changes the Name of an client (Can cause client to crash! Use carefully!)"),
-    ALERTALL(1, 1, "alert <message>", "Alert all clients"),
+    ALERTALL(1, 1, "alertall <message>", "Alert all clients"),
     RENAMECHANNEL(2, 2, "renamechannel <oldName> <newName>", "Renames a channel"),
+    SHOWUSERNAME(1, 1, "showusername <uuid>", "Shows username of client"),
+    SHOWUUID(1, 1, "showuuid <username>", "Shows uuid of client (Please keep in mind, that this is not possible if the username has whitespaces)"),
+    BAN(1, 2, "ban <uuid> (<duration>)", "Ban a user!"),
+    UNBAN(1, 1, "unban <uuid>", "Unban a user!"),
+    ADDPERM(2, 2, "addperm <group> <permission>", "Add a permission to a group"),
+    REMOVEPERM(2, 2, "removeperm <group> <permission>", "Removes a permission of a group"),
 
     //Aliases
     RCHANNEL(RENAMECHANNEL, 2, 2),

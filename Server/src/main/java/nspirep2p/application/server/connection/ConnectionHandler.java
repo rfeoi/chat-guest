@@ -85,4 +85,8 @@ public class ConnectionHandler {
     public ArrayList<Client> getClients() {
         return clients;
     }
+
+    public boolean getServerRun() {
+        return serverRun;
+    }
 }

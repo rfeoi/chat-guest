@@ -10,8 +10,7 @@ import org.tmatesoft.sqljet.core.table.SqlJetDb;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 
 public class PermissionManagment {
 
@@ -43,7 +42,7 @@ public class PermissionManagment {
      * This will load or reload the permissions from database
      * @throws SqlJetException if an database error happens
      */
-    private void reLoadDatabase() throws SqlJetException {
+    public void reLoadDatabase() throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.READ_ONLY);
         ISqlJetTable table = database.getTable("roles");
         ISqlJetCursor cursor = table.order(table.getPrimaryKeyIndexName());
@@ -137,6 +136,65 @@ public class PermissionManagment {
             database.commit();
         }
 
+    }
+
+    /**
+     * Sets the permissions of a group
+     *
+     * @param group       the group where the permissions should be set
+     * @param permissions the permissions
+     */
+    private void setGroupPermissions(String group, String[] permissions) {
+        String json_permission = gson.toJson(permissions);
+        try {
+            database.beginTransaction(SqlJetTransactionMode.WRITE);
+            ISqlJetCursor updateCursor = database.getTable("roles").open();
+            do {
+                if (updateCursor.getString("name").equals(group)) {
+                    updateCursor.update(
+                            group,
+                            json_permission,
+                            updateCursor.getString("key")
+                    );
+                    break;
+                }
+
+            } while (updateCursor.next());
+            updateCursor.close();
+            database.commit();
+        } catch (SqlJetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Adds permission to group
+     *
+     * @param group      the name of the role
+     * @param permission the permission which should be added
+     */
+    @SuppressWarnings("Duplicates") //Coming from removePermission
+    public void addPermission(String group, Permission permission) {
+        if (permissions.get(group) == null) return;
+        List<String> permissions_group = new LinkedList<>(Arrays.asList(permissions.get(group)));
+        permissions_group.add(permission + "");
+        String[] permission_group_array = permissions_group.toArray(new String[0]);
+        setGroupPermissions(group, permission_group_array);
+    }
+
+    /**
+     * Removes permission from group
+     *
+     * @param group      the name of the role
+     * @param permission the permission which should be remove
+     */
+    @SuppressWarnings("Duplicates") //Coming from addPermission
+    public void removePermission(String group, Permission permission) {
+        if (permissions.get(group) == null) return;
+        List<String> permissions_group = new LinkedList<>(Arrays.asList(permissions.get(group)));
+        permissions_group.remove(permission + "");
+        String[] permission_group_array = permissions_group.toArray(new String[0]);
+        setGroupPermissions(group, permission_group_array);
     }
 
 

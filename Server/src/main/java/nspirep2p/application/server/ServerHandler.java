@@ -4,10 +4,7 @@ import nspirep2p.application.server.connection.Client;
 import nspirep2p.application.server.connection.ConnectionHandler;
 import nspirep2p.application.server.database.Permission;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 public class ServerHandler {
 
@@ -87,8 +84,15 @@ public class ServerHandler {
      */
     public void kickClient(Client kicker, String toBeKicked, String reason) {
         if (kicker.hasPermission(Permission.KICK_USER)) {
-            forceKick(getClientByUsername(toBeKicked), reason);
-            System.out.println("User " + toBeKicked + " gots kicked by " + kicker.username);
+            Client toBeKickedClient = getClientByUsername(toBeKicked);
+            if (toBeKickedClient != null) {
+                if (!toBeKickedClient.hasPermission(Permission.IMMUNE)) {
+                    forceKick(getClientByUsername(toBeKicked), reason);
+                    System.out.println("User " + toBeKicked + " gots kicked by " + kicker.uuid);
+                } else {
+                    sendErrorMessage(kicker, Permission.IMMUNE.getNoPermissionError());
+                }
+            }
         } else {
             sendErrorMessage(kicker, Permission.KICK_USER.getNoPermissionError());
         }
@@ -138,7 +142,7 @@ public class ServerHandler {
      * @param username The username of the client (case sensitive)
      * @return a client or null if none found
      */
-    private Client getClientByUsername(String username) {
+    public Client getClientByUsername(String username) {
         for (Client client : connectionHandler.getClients()) {
             if (client.username == null) continue;
             if (client.username.equals(username)) return client;
@@ -251,6 +255,32 @@ public class ServerHandler {
     }
 
     /**
+     * Ban a client
+     *
+     * @param client   who should be banned
+     * @param duration of ban (0 means forever)
+     */
+    public void forceBan(Client client, long duration) {
+        if (client != null) {
+            if (duration != 0) {
+                duration = new Date().getTime() + duration;
+            }
+            main.banManagment.ban(client, duration);
+            System.out.println("Client " + client.uuid + " got banned!");
+            forceKick(client, "You are banned!");
+        }
+    }
+
+    /**
+     * Unban a client
+     *
+     * @param uuid the uuid of the client which gots unbanned
+     */
+    public void forceUnban(String uuid) {
+        main.banManagment.unban(uuid);
+        System.out.println("Unbanned " + uuid);
+    }
+    /**
      * Enters the group a user entered a key for
      * If key is wrong it enters standard user group
      *
@@ -258,8 +288,9 @@ public class ServerHandler {
      * @param hashed key
      */
     public void enterGroup(Client client, String hashed) {
-        System.out.println("Client " + client.username + " tried to change role!");
-        client.setRole(main.permissionManagment.checkKey(hashed));
+        String role = main.permissionManagment.checkKey(hashed);
+        System.out.println("Client " + client.uuid + " tried to changed role to " + role + "!");
+        client.setRole(role);
     }
 
     /**

@@ -9,6 +9,7 @@ public enum Permission {
     MANAGE_PUBLIC_CHANNEL,
     KICK_USER("Sorry you do not have the permission to kick a different user!"),
     //Admin permissions
+    IMMUNE("You can not ban/kick this user!"),
     READ_UUID,
     CONTROL_OTHER("Please do not pretend to say, that you are a different one.");
 

@@ -46,6 +46,18 @@ public class TestCommands {
         assertEquals(2, Command.RENAMECHANNEL.getMaxParameter());
         assertEquals(2, Command.RCHANNEL.getMinParameter());
         assertEquals(2, Command.RCHANNEL.getMaxParameter());
+        assertEquals(1, Command.SHOWUSERNAME.getMinParameter());
+        assertEquals(1, Command.SHOWUSERNAME.getMaxParameter());
+        assertEquals(1, Command.SHOWUUID.getMinParameter());
+        assertEquals(1, Command.SHOWUUID.getMaxParameter());
+        assertEquals(1, Command.BAN.getMinParameter());
+        assertEquals(2, Command.BAN.getMaxParameter());
+        assertEquals(1, Command.UNBAN.getMinParameter());
+        assertEquals(1, Command.UNBAN.getMaxParameter());
+        assertEquals(2, Command.ADDPERM.getMinParameter());
+        assertEquals(2, Command.ADDPERM.getMaxParameter());
+        assertEquals(2, Command.REMOVEPERM.getMinParameter());
+        assertEquals(2, Command.REMOVEPERM.getMaxParameter());
     }
 
     /**
@@ -68,6 +80,12 @@ public class TestCommands {
         assertNull(Command.USERNAME.getParent());
         assertNull(Command.ALERTALL.getParent());
         assertNull(Command.RENAMECHANNEL.getParent());
+        assertNull(Command.SHOWUSERNAME.getParent());
+        assertNull(Command.SHOWUUID.getParent());
+        assertNull(Command.BAN.getParent());
+        assertNull(Command.UNBAN.getParent());
+        assertNull(Command.ADDPERM.getParent());
+        assertNull(Command.REMOVEPERM.getParent());
     }
 
 }

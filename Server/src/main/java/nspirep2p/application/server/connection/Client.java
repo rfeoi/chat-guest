@@ -104,10 +104,14 @@ public class Client extends nspirep2p.communication.protocol.Client implements R
                 connectionHandler.main.serverHandler.quit(this);
                 return;
             }
+            if (connectionHandler.main.banManagment.isBanned(this)) {
+                connectionHandler.main.serverHandler.sendErrorMessage(this, "You are banned!");
+                return;
+            }
             if (connectionHandler.main.serverHandler.getClientByUUID(uuid) == null) {
                 connectionHandler.clients.add(this);
             } else {
-                connectionHandler.main.serverHandler.sendMessage(this, "Sorry UUID is already taken. Please reconnect with an other uuid!");
+                connectionHandler.main.serverHandler.sendErrorMessage(this, "Sorry UUID is already taken. Please reconnect with an other uuid!");
                 return;
             }
         } catch (IOException e) {
