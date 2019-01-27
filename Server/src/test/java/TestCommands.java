@@ -24,8 +24,8 @@ public class TestCommands {
         assertEquals(0, Command.CLOSE.getMaxParameter());
         assertEquals(0, Command.EXIT.getMinParameter());
         assertEquals(0, Command.EXIT.getMaxParameter());
-        assertEquals(2, Command.CCHANEL.getMaxParameter());
-        assertEquals(2, Command.CCHANEL.getMinParameter());
+        assertEquals(2, Command.CCHANNEL.getMaxParameter());
+        assertEquals(2, Command.CCHANNEL.getMinParameter());
         assertEquals(0, Command.HELP.getMinParameter());
         assertEquals(1, Command.HELP.getMaxParameter());
         assertEquals(1, Command.KICK.getMinParameter());
@@ -40,6 +40,12 @@ public class TestCommands {
         assertEquals(2, Command.CHANGEUSERNAME.getMaxParameter());
         assertEquals(2, Command.USERNAME.getMinParameter());
         assertEquals(2, Command.USERNAME.getMaxParameter());
+        assertEquals(1, Command.ALERTALL.getMinParameter());
+        assertEquals(1, Command.ALERTALL.getMaxParameter());
+        assertEquals(2, Command.RENAMECHANNEL.getMinParameter());
+        assertEquals(2, Command.RENAMECHANNEL.getMaxParameter());
+        assertEquals(2, Command.RCHANNEL.getMinParameter());
+        assertEquals(2, Command.RCHANNEL.getMaxParameter());
     }
 
     /**
@@ -52,13 +58,16 @@ public class TestCommands {
         assertEquals(Command.STOP, Command.EXIT.getParent());
         assertEquals(Command.LISTCLIENTS, Command.LIST.getParent());
         assertEquals(Command.CHANGEUSERNAME, Command.USERNAME.getParent());
+        assertEquals(Command.RENAMECHANNEL, Command.RCHANNEL.getParent());
         assertNull(Command.STOP.getParent());
-        assertNull(Command.CCHANEL.getParent());
+        assertNull(Command.CCHANNEL.getParent());
         assertNull(Command.LISTCLIENTS.getParent());
         assertNull(Command.HELP.getParent());
         assertNull(Command.KICK.getParent());
         assertNull(Command.KICKALL.getParent());
         assertNull(Command.USERNAME.getParent());
+        assertNull(Command.ALERTALL.getParent());
+        assertNull(Command.RENAMECHANNEL.getParent());
     }
 
 }

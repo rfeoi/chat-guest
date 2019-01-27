@@ -84,10 +84,15 @@ public class Main {
                 }
                 System.exit(0);
                 break;
-            case CCHANEL:
+            case CCHANNEL:
                 try {
                     channelManagment.createNewChannel(commandParser.getLastExecuted().getArgs()[0], Integer.parseInt(commandParser.getLastExecuted().getArgs()[1]));
+                    channelManagment.reLoadDatabase();
                     System.out.println("Channel created!");
+                    for (Client client : connectionHandler.getClients()) {
+                        serverHandler.sendChannelsToClient(client);
+                    }
+                    System.out.println("Channels pushed");
                 } catch (SqlJetException e) {
                     e.printStackTrace();
                 } catch (NumberFormatException e) {
@@ -139,8 +144,8 @@ public class Main {
                     reason_kickall = commandParser.getLastExecuted().getArgs()[0].replace("_", " ");
                 }
                 for (Client client : connectionHandler.getClients()) {
+                    System.out.println("Kicking " + client.username + " with uuid " + client.uuid + "!");
                     serverHandler.forceKick(client, reason_kickall);
-                    System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
                 }
                 break;
             case CHANGEUSERNAME: {
@@ -152,6 +157,27 @@ public class Main {
                     System.out.println("User not found!");
                 }
             }
+            break;
+            case ALERTALL:
+                String message = commandParser.getLastExecuted().getArgs()[0].replace("_", " ");
+                for (Client client : connectionHandler.getClients()) {
+                    serverHandler.sendErrorMessage(client, message);
+                }
+                System.out.println("Alerted all with " + message);
+                break;
+            case RENAMECHANNEL:
+                try {
+                    channelManagment.setName(commandParser.getLastExecuted().getArgs()[0], commandParser.getLastExecuted().getArgs()[1]);
+                    channelManagment.reLoadDatabase();
+                    System.out.println("Channel renamed!");
+                    for (Client client : connectionHandler.getClients()) {
+                        serverHandler.sendChannelsToClient(client);
+                    }
+                    System.out.println("Channels pushed");
+                } catch (SqlJetException e) {
+                    e.printStackTrace();
+                }
+                break;
         }
     }
 

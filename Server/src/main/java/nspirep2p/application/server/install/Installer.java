@@ -62,7 +62,7 @@ public class Installer {
     private void createDefaultChannel(int count) throws SqlJetException {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
-                Main.mainClass.channelManagment.createNewChannel("Channel " + i, count - i);
+                Main.mainClass.channelManagment.createNewChannel("Channel_" + i, count - i);
             }
         }
     }

@@ -8,13 +8,16 @@ public enum Command {
     //Commands
     HELP(0, 1, "help (<command>)", "Shows help of all/one commands"),
     STOP(0, 0, "stop", "Stops the server"),
-    CCHANEL(2, 2, "cchanel <name> <level>", "Creates a new channel (needs an manual server restart afterwards)"),
+    CCHANNEL(2, 2, "cchanel <name> <level>", "Creates a new channel."),
     LISTCLIENTS(0, 0, "listclients", "Gives back a list of clients"),
     KICK(1, 2, "kick <uuid> (<reason>)", "Kicks a client"),
     KICKALL(0, 1, "kickall (<reason>)", "Kicks all clients"),
-    CHANGEUSERNAME(2, 2, "changeUsername <uuid> <newUsername>", "Changes the Name of an client"),
+    CHANGEUSERNAME(2, 2, "changeUsername <uuid> <newUsername>", "Changes the Name of an client (Can cause client to crash! Use carefully!)"),
+    ALERTALL(1, 1, "alert <message>", "Alert all clients"),
+    RENAMECHANNEL(2, 2, "renamechannel <oldName> <newName>", "Renames a channel"),
 
     //Aliases
+    RCHANNEL(RENAMECHANNEL, 2, 2),
     CLOSE(STOP, 0, 0),
     EXIT(STOP, 0, 0),
     BREAK(STOP, 0, 0),

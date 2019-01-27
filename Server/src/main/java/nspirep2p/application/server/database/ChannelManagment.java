@@ -39,7 +39,7 @@ public class ChannelManagment {
      *
      * @throws SqlJetException if an database error happens
      */
-    private void reLoadDatabase() throws SqlJetException {
+    public void reLoadDatabase() throws SqlJetException {
         database.beginTransaction(SqlJetTransactionMode.READ_ONLY);
         ISqlJetTable table = database.getTable("channel");
         ISqlJetCursor cursor = table.order(table.getPrimaryKeyIndexName());
@@ -78,9 +78,36 @@ public class ChannelManagment {
         } finally {
             database.commit();
         }
-
     }
 
+    /**
+     * Sets the value of a setting
+     *
+     * @param oldName the old channel Name
+     * @param newName the new channel name
+     * @throws SqlJetException if something with database goes wrong
+     */
+    public void setName(String oldName, String newName) throws SqlJetException {
+        database.beginTransaction(SqlJetTransactionMode.WRITE);
+        ISqlJetCursor updateCursor = database.getTable("channel").open();
+        do {
+            if (updateCursor.getString("name").equals(oldName)) {
+                updateCursor.update(
+                        newName,
+                        updateCursor.getValue("level"));
+                break;
+            }
+
+        } while (updateCursor.next());
+        updateCursor.close();
+        database.commit();
+    }
+
+    /**
+     * Get a list of all public channel
+     *
+     * @return Channel as array
+     */
     public String[] getChannel() {
         return channel;
     }

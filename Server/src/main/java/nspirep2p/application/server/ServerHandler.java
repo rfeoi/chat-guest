@@ -32,12 +32,14 @@ public class ServerHandler {
     public void pushUsernameToClients(Client client, String newUsername) {
         if (newUsername.equals("null")) return;
         if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
-            System.out.println("Changed username from " + client.username + " to " + newUsername);
+            System.out.println(client.uuid + " changed username from " + client.username + " to " + newUsername);
             //Change the name of the channel user are in (if the user has an private channel)
             if (privateChannels.contains(client) && getClientsInChannel(client.username).length != 0)
                 for (Client userInChannel : getClientsInChannel(client.username)) userInChannel.setChannel(newUsername);
             connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, newUsername));
             client.username = newUsername;
+        } else {
+            sendErrorMessage(client, "This username is already taken. Please try a different one!");
         }
     }
 
@@ -88,7 +90,7 @@ public class ServerHandler {
             forceKick(getClientByUsername(toBeKicked), reason);
             System.out.println("User " + toBeKicked + " gots kicked by " + kicker.username);
         } else {
-            sendMessage(kicker, Permission.KICK_USER.getNoPermissionError());
+            sendErrorMessage(kicker, Permission.KICK_USER.getNoPermissionError());
         }
     }
 
@@ -112,6 +114,9 @@ public class ServerHandler {
      * @param message the message which will be send
      */
     public void sendMessage(Client client, String message) {
+        if (client.username == null) {
+            sendErrorMessage(client, "Please set a username first!");
+        }
         for (Client recipient : getClientsInChannel(client.getChannel())) {
             recipient.send(connectionHandler.parser.sendMessage(client, client.getChannel(), message));
         }
@@ -124,7 +129,6 @@ public class ServerHandler {
      * @param message the message which should be send
      */
     public void sendErrorMessage(Client client, String message) {
-        //TODO "none" check
         client.send(connectionHandler.parser.sendError(message));
     }
 
