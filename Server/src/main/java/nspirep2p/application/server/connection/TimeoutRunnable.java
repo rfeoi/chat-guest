@@ -3,6 +3,7 @@ package nspirep2p.application.server.connection;
 import nspirep2p.application.server.database.ServerSetting;
 import org.tmatesoft.sqljet.core.SqlJetException;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class TimeoutRunnable implements Runnable {
@@ -24,7 +25,8 @@ public class TimeoutRunnable implements Runnable {
         long checkStarted;
         while (connectionHandler.serverRun) {
             checkStarted = new Date().getTime();
-            for (Client client : connectionHandler.getClients()) {
+            @SuppressWarnings("unchecked") ArrayList<Client> clients = (ArrayList<Client>) connectionHandler.getClients().clone();
+            for (Client client : clients) {
                 if (new Date().getTime() - client.lastPing > 10000 + timeout_time_since_request) {
                     connectionHandler.main.serverHandler.quit(client);
                 } else if (new Date().getTime() - client.lastPing > 10000) {
