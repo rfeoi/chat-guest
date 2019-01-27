@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Main {
-    public UserInterface userInterface;
+    UserInterface userInterface;
     public MainInterface mainInterface;
     public ConnectionHandler connectionHandler;
     public UserPropetySave userPropetySave;

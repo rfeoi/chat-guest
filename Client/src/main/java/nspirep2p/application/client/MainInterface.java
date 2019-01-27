@@ -31,7 +31,6 @@ public class MainInterface extends JFrame implements AWTEventListener {
         frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setSize(1000,500);
-        frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         setPanel();
@@ -45,6 +44,7 @@ public class MainInterface extends JFrame implements AWTEventListener {
         if (!hasSucceeded) {
             Main.mainClass.userInterface.makeVisible("Error when connecting to the server!");
         }
+        frame.setVisible(true);
     }
     /**
      * Starts the initialization process of the panels.

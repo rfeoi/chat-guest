@@ -238,15 +238,14 @@ public class ConnectionHandler extends Client {
                 break;
             case GET_CLIENTS:
                 String[] userList = parsed.getArg(Function.GET_CLIENTS.getParameters()[0]).split(",");
+                Main.mainClass.mainInterfaceData.removeAllUsers();
                 for (String user : userList) {
                     Main.mainClass.mainInterfaceData.addUser(user);
                 }
                 break;
             case GET_CHANNELS:
                 String[] channelList = parsed.getArg(Function.GET_CHANNELS.getParameters()[0]).split(",");
-                for (String channel : Main.mainClass.mainInterfaceData.getChannel()) {
-                    Main.mainClass.mainInterfaceData.removeChannel(channel);
-                }
+                Main.mainClass.mainInterfaceData.removeAllChannel();
                 for (String channel : channelList) {
                     Main.mainClass.mainInterfaceData.addChannel(channel);
                 }
