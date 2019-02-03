@@ -147,6 +147,50 @@ public class CommunicationParser {
         return null;
     }
 
+    /**
+     * Only from Client to Server.
+     * Send the request to the server to create a new PERMANENT Channel
+     *
+     * @param client  the client who requests
+     * @param channel the name of the channel who should be created
+     * @param level   the Level of the Channel
+     * @return the push to Server
+     */
+    public String[] createChannel(Client client, String channel, int level) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[5];
+            push[0] = "function=CREATE_PERM_CHANNEL";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = Function.CREATE_PERM_CHANNEL.getParameters()[0] + "=" + channel;
+            push[3] = Function.CREATE_PERM_CHANNEL.getParameters()[1] + "=" + level;
+            push[4] = END_WAIT;
+            return push;
+        }
+        return new String[]{};
+    }
+
+    /**
+     * Only from Client to Server.
+     * Send the request to the server to edit a PERMANENT Channel
+     *
+     * @param client  the client who requests
+     * @param channel the name of the channel who should be edited
+     * @param newName the new name of the channel
+     * @return the push to Server
+     */
+    public String[] createChannel(Client client, String channel, String newName) {
+        if (clientType == ClientType.CLIENT) {
+            String[] push = new String[5];
+            push[0] = "function=EDIT_PERM_CHANNEL";
+            push[1] = "auth.uuid=" + client.uuid;
+            push[2] = Function.EDIT_PERM_CHANNEL.getParameters()[0] + "=" + channel;
+            push[3] = Function.EDIT_PERM_CHANNEL.getParameters()[1] + "=" + newName;
+            push[4] = END_WAIT;
+            return push;
+        }
+        return new String[]{};
+    }
+
 
     /**
      * For client:

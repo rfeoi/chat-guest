@@ -18,6 +18,8 @@ public enum Function {
     SEND_ERROR(new String[]{"error"}),
     ENTER_GROUP(new String[]{"hashed"}),
     KICK(new String[]{"username", "reason"}),
+    CREATE_PERM_CHANNEL(new String[]{"channel", "level"}),
+    EDIT_PERM_CHANNEL(new String[]{"channel", "level"}),
     PING(new String[]{});
 
 
