@@ -10,6 +10,13 @@ That's a good question.
 ## Is there any Library?
 Yes and no. There is no official Library for writing e.g. chat-bots.<br>
 But you can just use the files in the Client/Server Communication Directory, build it up into an jar and use it as Library for your project. Just read the documentation written to methods and look at our implementation. 
+## Usage
+1. Download from Release Tab
+2. `java -jar Server.jar`
+3. Follow installation steps
+4. Run `client.jar`
+5. Connect to your server IP
+6. Success?
 ## License
 We decided to use MIT License.
 ### Contribution
