@@ -136,8 +136,9 @@ public class MainInterface extends JFrame implements AWTEventListener {
         String text = messages.getText();
         text = text.replace("</html>", "");
         messages.setText(text + "<br>[" + time + "] <b>" + from + ":</b> " + message + "</html>");
-        frame.setVisible(false);
-        frame.setVisible(true);
+        invalidate();
+        validate();
+        repaint();
     }
 
     /**
