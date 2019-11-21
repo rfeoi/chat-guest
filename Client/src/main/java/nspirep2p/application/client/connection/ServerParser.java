@@ -45,11 +45,13 @@ public class ServerParser implements Runnable{
                 //Hier einfügen
                 multipleLinesReader.read(message);
                 if (multipleLinesReader.isEnd()) {
-                    try {
-                        //parse Package
-                        Main.mainClass.connectionHandler.parsePackage(multipleLinesReader.getLines());
-                    } catch (WrongPackageFormatException e) {
-                        System.out.println("Wrong Package");
+                    if (!multipleLinesReader.getLines()[0].equals("accept")) {
+                        try {
+                            //parse Package
+                            Main.mainClass.connectionHandler.parsePackage(multipleLinesReader.getLines());
+                        } catch (WrongPackageFormatException e) {
+                            System.out.println("Wrong Package");
+                        }
                     }
                     multipleLinesReader.clear();
                 }
