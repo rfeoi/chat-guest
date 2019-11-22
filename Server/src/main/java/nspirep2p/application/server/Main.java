@@ -29,15 +29,15 @@ public class Main {
     public BanManagment banManagment;
 
     public static void main(String[] args) {
-        System.out.println("Welcome to Chat-guest Server application!");
-        System.out.println("This is an opensource project licensed under MIT License.");
-        System.out.println("This is provided as it is without any warranty!");
-        System.out.println("Feel free to contribute to https://github.com/rfeoi/chat-guest.");
+        System.out.println("[Server] Welcome to Chat-guest Server application!");
+        System.out.println("[Server] This is an opensource project licensed under MIT License.");
+        System.out.println("[Server] This is provided as it is without any warranty!");
+        System.out.println("[Server] Feel free to contribute to https://github.com/rfeoi/chat-guest.");
         mainClass = new Main();
         try {
             mainClass.start();
         } catch (IOException e) {
-            System.err.println("Oh! Something wrong happens when starting Server!");
+            System.err.println("[Server] Oh! Something wrong happens when starting Server!");
             e.printStackTrace();
         } catch (SqlJetException e) {
             e.printStackTrace();
@@ -88,11 +88,11 @@ public class Main {
                 try {
                     channelManagment.createNewChannel(commandParser.getLastExecuted().getArgs()[0], Integer.parseInt(commandParser.getLastExecuted().getArgs()[1]));
                     channelManagment.reLoadDatabase();
-                    System.out.println("Channel created!");
+                    System.out.println("[Server] Channel created!");
                     for (Client client : connectionHandler.getClients()) {
                         serverHandler.sendChannelsToClient(client);
                     }
-                    System.out.println("Channels pushed");
+                    System.out.println("[Server] Channels pushed");
                 } catch (SqlJetException e) {
                     e.printStackTrace();
                 } catch (NumberFormatException e) {
@@ -112,10 +112,10 @@ public class Main {
             {
                 Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
                 if (client != null) {
-                    System.out.println("Kicked " + client.username + " with uuid " + client.uuid + "!");
+                    System.out.println("[Server] Kicked " + client.username + " with uuid " + client.uuid + "!");
                     serverHandler.forceKick(client, reason);
                 } else
-                    System.err.println("Could not find user with uuid " + commandParser.getLastExecuted().getArgs()[0]);
+                    System.err.println("[Server] Could not find user with uuid " + commandParser.getLastExecuted().getArgs()[0]);
                 break;
             }
             case HELP:
@@ -134,7 +134,7 @@ public class Main {
                             System.out.println(helpWanted.getParent().getHelp());
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Command " + commandParser.getLastExecuted().getArgs()[0] + " does not exists!");
+                        System.out.println("[Server] Command " + commandParser.getLastExecuted().getArgs()[0] + " does not exists!");
                     }
                 }
                 break;
@@ -144,17 +144,17 @@ public class Main {
                     reason_kickall = commandParser.getLastExecuted().getArgs()[0].replace("_", " ");
                 }
                 for (Client client : connectionHandler.getClients()) {
-                    System.out.println("Kicking " + client.username + " with uuid " + client.uuid + "!");
+                    System.out.println("[Server] Kicking " + client.username + " with uuid " + client.uuid + "!");
                     serverHandler.forceKick(client, reason_kickall);
                 }
                 break;
             case CHANGEUSERNAME: {
                 Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
                 if (client != null) {
-                    System.out.println("Changing username from " + client.username + " to " + commandParser.getLastExecuted().getArgs()[1]);
+                    System.out.println("[Server] Changing username from " + client.username + " to " + commandParser.getLastExecuted().getArgs()[1]);
                     serverHandler.pushUsernameToClients(client, commandParser.getLastExecuted().getArgs()[1]);
                 } else {
-                    System.out.println("User not found!");
+                    System.out.println("[Server] User not found!");
                 }
             }
             break;
@@ -163,17 +163,17 @@ public class Main {
                 for (Client client : connectionHandler.getClients()) {
                     serverHandler.sendErrorMessage(client, message);
                 }
-                System.out.println("Alerted all with " + message);
+                System.out.println("[Server] Alerted all with " + message);
                 break;
             case RENAMECHANNEL:
                 try {
                     channelManagment.setName(commandParser.getLastExecuted().getArgs()[0], commandParser.getLastExecuted().getArgs()[1]);
                     channelManagment.reLoadDatabase();
-                    System.out.println("Channel renamed!");
+                    System.out.println("[Server] Channel renamed!");
                     for (Client client : connectionHandler.getClients()) {
                         serverHandler.sendChannelsToClient(client);
                     }
-                    System.out.println("Channels pushed");
+                    System.out.println("[Server] Channels pushed");
                 } catch (SqlJetException e) {
                     e.printStackTrace();
                 }
@@ -181,18 +181,18 @@ public class Main {
             case SHOWUSERNAME: {
                 Client client = serverHandler.getClientByUUID(commandParser.getLastExecuted().getArgs()[0]);
                 if (client != null) {
-                    System.out.println("The username of the client is: " + client.username);
+                    System.out.println("[Server] The username of the client is: " + client.username);
                 } else {
-                    System.out.println("The client was not found!");
+                    System.out.println("[Server] The client was not found!");
                 }
             }
             break;
             case SHOWUUID: {
                 Client client = serverHandler.getClientByUsername(commandParser.getLastExecuted().getArgs()[0]);
                 if (client != null) {
-                    System.out.println("The uuid of the client is: " + client.uuid);
+                    System.out.println("[Server] The uuid of the client is: " + client.uuid);
                 } else {
-                    System.out.println("The client was not found!");
+                    System.out.println("[Server] The client was not found!");
                 }
             }
             break;
@@ -205,7 +205,7 @@ public class Main {
                     }
                     serverHandler.forceBan(client, duration);
                 } else {
-                    System.out.println("Client not found!");
+                    System.out.println("[Server] Client not found!");
                 }
             }
             break;
@@ -218,7 +218,7 @@ public class Main {
                     permissionManagment.addPermission(commandParser.getLastExecuted().getArgs()[0], permission);
                     permissionManagment.reLoadDatabase();
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Permission not found");
+                    System.out.println("[Server] Permission not found");
                 } catch (SqlJetException e) {
                     e.printStackTrace();
                 }
@@ -230,7 +230,7 @@ public class Main {
                     permissionManagment.removePermission(commandParser.getLastExecuted().getArgs()[0], permission);
                     permissionManagment.reLoadDatabase();
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Permission not found");
+                    System.out.println("[Server] Permission not found");
                 } catch (SqlJetException e) {
                     e.printStackTrace();
                 }
@@ -255,36 +255,36 @@ public class Main {
             installer.startSetup();
         }
         long before;
-        System.out.println("Starting server...");
-        System.out.print("Init ConnectionHandler");
+        System.out.println("[Server] Starting server...");
+        System.out.print("[Server] Init ConnectionHandler");
         before = System.currentTimeMillis();
         connectionHandler = new ConnectionHandler(this, Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_PORT)), Integer.parseInt(databaseManager.getSetting(ServerSetting.SERVER_SLOTS)));
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Init server handler.");
+        System.out.print("[Server] Init server handler.");
         before = System.currentTimeMillis();
         serverHandler = new ServerHandler(this);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Init PermissionManagement");
+        System.out.print("[Server] Init PermissionManagement");
         before = System.currentTimeMillis();
         permissionManagment = new PermissionManagment(databaseManager);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Init ChannelManagement");
+        System.out.print("[Server] Init ChannelManagement");
         before = System.currentTimeMillis();
         channelManagment = new ChannelManagment(databaseManager);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Init BanManagment");
+        System.out.print("[Server] Init BanManagment");
         before = System.currentTimeMillis();
         banManagment = new BanManagment(databaseManager);
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Starting ConnectionHandler with Server.");
+        System.out.print("[Server] Starting ConnectionHandler with Server.");
         before = System.currentTimeMillis();
         connectionHandler.start();
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.print("Starting CommandParser Instance.");
+        System.out.print("[Server] Starting CommandParser Instance.");
         before = System.currentTimeMillis();
         commandParser = new CommandParser();
         System.out.println("[" + (System.currentTimeMillis() - before) + "ms]");
-        System.out.println("Started on port " + databaseManager.getSetting(ServerSetting.SERVER_PORT));
+        System.out.println("[Server] Started on port " + databaseManager.getSetting(ServerSetting.SERVER_PORT));
         commandParsing();
     }
 }

@@ -29,7 +29,7 @@ public class ServerHandler {
     public void pushUsernameToClients(Client client, String newUsername) {
         if (newUsername.equals("null")) return;
         if (getClientByUsername(newUsername) == null && !Arrays.asList(main.channelManagment.getChannel()).contains(newUsername)) {
-            System.out.println(client.uuid + " changed username from " + client.username + " to " + newUsername);
+            System.out.println("[Username] " + client.uuid + " changed username from " + client.username + " to " + newUsername);
             //Change the name of the channel user are in (if the user has an private channel)
             if (privateChannels.contains(client) && getClientsInChannel(client.username).length != 0)
                 for (Client userInChannel : getClientsInChannel(client.username)) userInChannel.setChannel(newUsername);
@@ -88,7 +88,7 @@ public class ServerHandler {
             if (toBeKickedClient != null) {
                 if (!toBeKickedClient.hasPermission(Permission.IMMUNE)) {
                     forceKick(getClientByUsername(toBeKicked), reason);
-                    System.out.println("User " + toBeKicked + " gots kicked by " + kicker.uuid);
+                    System.out.println("[Client Connection] User " + toBeKicked + " gots kicked by " + kicker.uuid);
                 } else {
                     sendErrorMessage(kicker, Permission.IMMUNE.getNoPermissionError());
                 }
@@ -246,7 +246,7 @@ public class ServerHandler {
      */
     public void quit(Client client) {
         if (connectionHandler.getClients().contains(client)) {
-            System.out.println("The client " + client.username + " left.");
+            System.out.println("[Client Connection] The client " + client.username + " left.");
             connectionHandler.clients.remove(client);
             deletePrivateChannel(client);
             connectionHandler.broadcast(connectionHandler.parser.pushUsername(client, "null"));
@@ -289,7 +289,7 @@ public class ServerHandler {
      */
     public void enterGroup(Client client, String hashed) {
         String role = main.permissionManagment.checkKey(hashed);
-        System.out.println("Client " + client.uuid + " tried to changed role to " + role + "!");
+        System.out.println("[Client Connection] Client " + client.uuid + " tried to changed role to " + role + "!");
         client.setRole(role);
     }
 
