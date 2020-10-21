@@ -77,7 +77,7 @@ public class TestCommands {
         assertNull(Command.HELP.getParent());
         assertNull(Command.KICK.getParent());
         assertNull(Command.KICKALL.getParent());
-        assertNull(Command.USERNAME.getParent());
+        assertNull(Command.CHANGEUSERNAME.getParent());
         assertNull(Command.ALERTALL.getParent());
         assertNull(Command.RENAMECHANNEL.getParent());
         assertNull(Command.SHOWUSERNAME.getParent());
